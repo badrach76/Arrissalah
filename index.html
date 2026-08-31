@@ -110,7 +110,7 @@
             </div>
         </div>
 
-        <!-- صفحة مستقلة خاصة بكل سلك (تظهر منفصلة تماماً) -->
+        <!-- صفحة مستقلة خاصة بكل سلك -->
         <div id="level-page" class="card" style="display:none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
                 <h4 id="selected-level-title" style="color: var(--primary); margin: 0; font-size: 19px;"></h4>
@@ -213,7 +213,6 @@
 
         function openLevel(levelName) {
             currentActiveLevel = levelName;
-            // إخفاء قائمة المستويات وإظهار صفحة السلك المستقلة
             document.getElementById('dashboard-main').style.display = 'none';
             document.getElementById('level-page').style.display = 'block';
             document.getElementById('selected-level-title').innerText = "صفحة تدبير: " + levelName;
@@ -224,7 +223,6 @@
         }
 
         function closeLevel() {
-            // إخفاء صفحة السلك والعودة للقائمة الرئيسية
             document.getElementById('level-page').style.display = 'none';
             document.getElementById('dashboard-main').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
