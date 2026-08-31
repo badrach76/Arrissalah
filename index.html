@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مدرسة الرسالة</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Tahoma, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; direction: rtl; text-align: right; }
+        .card { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #219653; }
+        #message { margin-top: 15px; text-align: center; color: #c0392b; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>مدرسة الرسالة</h2>
+        <div id="login-form">
+            <input type="email" id="email" placeholder="البريد الإلكتروني" />
+            <input type="password" id="password" placeholder="كلمة المرور" />
+            <button onclick="handleLogin()">تسجيل الدخول</button>
+        </div>
+        <div id="dashboard" style="display:none;">
+            <h3 style="color: #27ae60;">مرحباً بك في لوحة القيادة</h3>
+            <p id="user-email-display"></p>
+            <button onclick="handleLogout()" style="background-color: #c0392b;">تسجيل الخروج</button>
+        </div>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://ginohutluqeprmkrodbb.supabase.co';
+        // ضع هنا مفتاح الـ anon key الخاص بك بدلاً من العبارة التالية بين علامتي التنصيص
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdpbm9odXRsdXFlcHJta3JvZGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMjExNTcsImV4cCI6MjEwMzU5NzE1N30.UmgTxGFIY7Ig45t2e6Ng48vhnnULxxQ1fjLRQEbvYfE';
+
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function checkUser() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                showDashboard(session.user.email);
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('message');
+
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+            
+            if (error) {
+                msg.innerText = "خطأ في تسجيل الدخول: " + error.message;
+            } else {
+                msg.innerText = "";
+                showDashboard(data.user.email);
+            }
+        }
+
+        async function handleLogout() {
+            await _supabase.auth.signOut();
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        }
+
+        function showDashboard(email) {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('user-email-display').innerText = "المستخدم الحالي: " + email;
+        }
+
+        checkUser();
+    </script>
+</body>
+</html>
