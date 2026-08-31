@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مؤسسة الرسالة للتعليم</title>
+    <title>منصة مؤسسة الرسالة للتعليم الخصوصي</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -44,8 +44,6 @@
         .level-card h3 { margin: 0 0 5px; color: var(--primary); font-size: 17px; }
         .level-card p { margin: 0; color: #64748b; font-size: 12px; }
 
-        .active-section { margin-top: 25px; background: #fff; padding: 25px; border-radius: 10px; border-right: 5px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: none; }
-        
         .search-box { margin-bottom: 20px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
@@ -61,7 +59,7 @@
 <body>
 
     <div class="header-banner">
-        <h1>مؤسسة الرسالة للتعليم</h1>
+        <h1>مؤسسة الرسالة للتعليم الخصوصي</h1>
         <p>منصة الإدارة والتدبير التربوي الرقمي</p>
     </div>
 
@@ -83,62 +81,63 @@
         </div>
 
         <!-- لوحة التحكم الرئيسية والمستويات -->
-        <div id="dashboard" class="card" style="display:none;">
+        <div id="dashboard-main" class="card" style="display:none;">
             <div class="user-info">
                 <div>المستخدم: <span id="user-email-display"></span></div>
                 <button class="logout-btn" onclick="handleLogout()">تسجيل الخروج</button>
             </div>
 
             <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 20px;">المستويات التعليمية</h3>
-            <p style="color: #64748b; margin-top: 0; font-size: 14px;">اختر السلك التعليمي لفتح صفحته الخاصة وإدارة تلاميذه:</p>
+            <p style="color: #64748b; margin-top: 0; font-size: 14px;">اختر السلك التعليمي لفتح صفحته الخاصة:</p>
             
             <div class="levels-grid">
                 <div class="level-card" onclick="openLevel('التعليم الأولي')">
                     <h3>التعليم الأولي</h3>
-                    <p>عرض صفحة التعليم الأولي</p>
+                    <p>فتح صفحة التعليم الأولي</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الابتدائي')">
                     <h3>الابتدائي</h3>
-                    <p>عرض صفحة التعليم الابتدائي</p>
+                    <p>فتح صفحة التعليم الابتدائي</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الإعدادي')">
                     <h3>الإعدادي</h3>
-                    <p>عرض صفحة التعليم الإعدادي</p>
+                    <p>فتح صفحة التعليم الإعدادي</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الثانوي')">
                     <h3>الثانوي</h3>
-                    <p>عرض صفحة التعليم الثانوي</p>
+                    <p>فتح صفحة التعليم الثانوي</p>
                 </div>
             </div>
+        </div>
 
-            <!-- صفحة مستقلة لكل سلك مع محرك البحث وجدول التلاميذ -->
-            <div id="level-content" class="active-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                    <h4 id="selected-level-title" style="color: var(--primary); margin: 0; font-size: 19px;"></h4>
-                    <button onclick="closeLevel()" style="background-color: #64748b; padding: 6px 15px; font-size: 13px;">الرجوع للمستويات</button>
-                </div>
-                
-                <!-- محرك البحث الذكي -->
-                <div class="search-box">
-                    <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="ابحث بكود مسار، الاسم الشخصي، العائلي، أو المستوى الدراسي..." />
-                </div>
+        <!-- صفحة مستقلة خاصة بكل سلك (تظهر منفصلة تماماً) -->
+        <div id="level-page" class="card" style="display:none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
+                <h4 id="selected-level-title" style="color: var(--primary); margin: 0; font-size: 19px;"></h4>
+                <button onclick="closeLevel()" style="background-color: #64748b; padding: 6px 15px; font-size: 13px;">الرجوع للقائمة الرئيسية</button>
+            </div>
+            
+            <!-- محرك البحث الذكي -->
+            <div class="search-box">
+                <label>بحث سريع في التلاميذ:</label>
+                <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="ابحث بكود مسار، الاسم، العائلة، أو الصف..." />
+            </div>
 
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>كود مسار</th>
-                                <th>الاسم الشخصي</th>
-                                <th>الاسم العائلي</th>
-                                <th>المستوى الدراسي</th>
-                                <th>الصف الدراسي</th>
-                            </tr>
-                        </thead>
-                        <tbody id="students-table-body">
-                            <!-- سيتم تعبئة البيانات هنا ديناميكياً -->
-                        </tbody>
-                    </table>
-                </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>كود مسار</th>
+                            <th>الاسم الشخصي</th>
+                            <th>الاسم العائلي</th>
+                            <th>المستوى الدراسي</th>
+                            <th>الصف الدراسي</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body">
+                        <!-- البيانات ستعرض هنا -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -151,7 +150,6 @@
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // بيانات تجريبية شاملة ومجهزة بخانة الصف الدراسي
         const sampleStudents = {
             'التعليم الأولي': [
                 { مسار: 'M1001', الاسم: 'يوسف', العائلة: 'المنصوري', المستوى: 'التعليم الأولي', الصف: 'التمهيدي الأول (أ)' },
@@ -201,26 +199,35 @@
 
         async function handleLogout() {
             await _supabase.auth.signOut();
-            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('dashboard-main').style.display = 'none';
+            document.getElementById('level-page').style.display = 'none';
             document.getElementById('login-form').style.display = 'block';
-            document.getElementById('level-content').style.display = 'none';
         }
 
         function showDashboard(email) {
             document.getElementById('login-form').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('level-page').style.display = 'none';
+            document.getElementById('dashboard-main').style.display = 'block';
             document.getElementById('user-email-display').innerText = email;
         }
 
         function openLevel(levelName) {
             currentActiveLevel = levelName;
-            const content = document.getElementById('level-content');
-            content.style.display = 'block';
+            // إخفاء قائمة المستويات وإظهار صفحة السلك المستقلة
+            document.getElementById('dashboard-main').style.display = 'none';
+            document.getElementById('level-page').style.display = 'block';
             document.getElementById('selected-level-title').innerText = "صفحة تدبير: " + levelName;
             document.getElementById('searchInput').value = '';
             
             renderTable(sampleStudents[levelName] || []);
-            content.scrollIntoView({ behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function closeLevel() {
+            // إخفاء صفحة السلك والعودة للقائمة الرئيسية
+            document.getElementById('level-page').style.display = 'none';
+            document.getElementById('dashboard-main').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function renderTable(students) {
@@ -245,7 +252,7 @@
         }
 
         function filterStudents() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const students = sampleStudents[currentActiveLevel] || [];
             
             const filtered = students.filter(st => 
@@ -257,10 +264,6 @@
             );
 
             renderTable(filtered);
-        }
-
-        function closeLevel() {
-            document.getElementById('level-content').style.display = 'none';
         }
 
         checkUser();
