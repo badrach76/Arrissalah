@@ -3,39 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مدرسة الرسالة</title>
+    <title>منصة مؤسسة الرسالة للتعليم</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Tahoma, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; direction: rtl; text-align: right; }
-        .card { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
+        .card { max-width: 600px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2, h3 { color: #2c3e50; text-align: center; }
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button { width: 100%; background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; margin-top: 5px; }
         button:hover { background-color: #219653; }
+        .logout-btn { background-color: #c0392b; margin-top: 20px; }
+        .logout-btn:hover { background-color: #a93226; }
+        .levels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .level-card { background: #e8f8f5; border: 1px solid #a3e4d7; padding: 20px; border-radius: 6px; text-align: center; cursor: pointer; font-weight: bold; color: #117a65; }
+        .level-card:hover { background: #d1f2eb; }
         #message { margin-top: 15px; text-align: center; color: #c0392b; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>مدرسة الرسالة</h2>
+        <h2>مؤسسة الرسالة للتعليم</h2>
+        
+        <!-- نموذج تسجيل الدخول -->
         <div id="login-form">
+            <h3>تسجيل الدخول للإدارة</h3>
             <input type="email" id="email" placeholder="البريد الإلكتروني" />
             <input type="password" id="password" placeholder="كلمة المرور" />
-            <button onclick="handleLogin()">تسجيل الدخول</button>
+            <button onclick="handleLogin()">دخول</button>
         </div>
+
+        <!-- لوحة التحكم الرئيسية والمستويات -->
         <div id="dashboard" style="display:none;">
-            <h3 style="color: #27ae60;">مرحباً بك في لوحة القيادة</h3>
-            <p id="user-email-display"></p>
-            <button onclick="handleLogout()" style="background-color: #c0392b;">تسجيل الخروج</button>
+            <h3 style="color: #27ae60;">لوحة القيادة - المستويات الدراسية</h3>
+            <p id="user-email-display" style="text-align: center; color: #666;"></p>
+            
+            <div class="levels-grid">
+                <div class="level-card" onclick="openLevel('التليم الأولي')">التعليم الأولي</div>
+                <div class="level-card" onclick="openLevel('الابتدائي')">التعليم الابتدائي</div>
+                <div class="level-card" onclick="openLevel('الإعدادي')">التعليم الإعدادي</div>
+                <div class="level-card" onclick="openLevel('الثانوي')">التعليم الثانوي</div>
+            </div>
+
+            <div id="level-content" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 6px; display: none;">
+                <h4 id="selected-level-title" style="color: #2c3e50; margin-top: 0;"></h4>
+                <p>قريباً: إدارة تلاميذ هذا المستوى، تسجيل الغياب، والنقاط.</p>
+                <button onclick="closeLevel()" style="background-color: #7f8c8d; width: auto; padding: 8px 15px;">الرجوع للمستويات</button>
+            </div>
+
+            <button class="logout-btn" onclick="handleLogout()">تسجيل الخروج</button>
         </div>
+
         <div id="message"></div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://ginohutluqeprmkrodbb.supabase.co';
-        // ضع هنا مفتاح الـ anon key الخاص بك بدلاً من العبارة التالية بين علامتي التنصيص
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdpbm9odXRsdXFlcHJta3JvZGJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMjExNTcsImV4cCI6MjEwMzU5NzE1N30.UmgTxGFIY7Ig45t2e6Ng48vhnnULxxQ1fjLRQEbvYfE';
+        const SUPABASE_ANON_KEY = 'sb_publishable_HnxeYpiIqU7BXYJ5EfCTtQ_Xtom-SXC';
 
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -66,12 +90,22 @@
             await _supabase.auth.signOut();
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('login-form').style.display = 'block';
+            document.getElementById('level-content').style.display = 'none';
         }
 
         function showDashboard(email) {
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('user-email-display').innerText = "المستخدم الحالي: " + email;
+        }
+
+        function openLevel(levelName) {
+            document.getElementById('level-content').style.display = 'block';
+            document.getElementById('selected-level-title').innerText = "إدارة السلك: " + levelName;
+        }
+
+        function closeLevel() {
+            document.getElementById('level-content').style.display = 'none';
         }
 
         checkUser();
