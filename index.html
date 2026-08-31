@@ -27,9 +27,9 @@
         
         h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 22px; }
         
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: #475569; font-size: 14px; }
-        input { width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fdfdfd; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #475569; font-size: 13px; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fdfdfd; }
         input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
         
         button { background-color: var(--accent); color: white; padding: 12px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.3s; }
@@ -44,6 +44,7 @@
         .level-card h3 { margin: 0 0 5px; color: var(--primary); font-size: 17px; }
         .level-card p { margin: 0; color: #64748b; font-size: 12px; }
 
+        .form-section { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
         .search-box { margin-bottom: 20px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
@@ -53,7 +54,7 @@
 
         .user-info { display: flex; justify-content: space-between; align-items: center; background: #eff6ff; padding: 12px 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #dbeafe; }
         .user-info span { color: var(--primary); font-weight: 600; }
-        #message { margin-top: 15px; text-align: center; color: #ef4444; font-weight: 600; }
+        #message, #form-msg { margin-top: 10px; text-align: center; color: #ef4444; font-weight: 600; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -88,35 +89,64 @@
             </div>
 
             <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 20px;">المستويات التعليمية</h3>
-            <p style="color: #64748b; margin-top: 0; font-size: 14px;">اختر السلك التعليمي لفتح صفحته الخاصة:</p>
+            <p style="color: #64748b; margin-top: 0; font-size: 14px;">اختر السلك التعليمي لإدارة التلاميذ وإضافة بياناتهم:</p>
             
             <div class="levels-grid">
                 <div class="level-card" onclick="openLevel('التعليم الأولي')">
                     <h3>التعليم الأولي</h3>
-                    <p>فتح صفحة التعليم الأولي</p>
+                    <p>إدارة تلاميذ الأولي</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الابتدائي')">
                     <h3>الابتدائي</h3>
-                    <p>فتح صفحة التعليم الابتدائي</p>
+                    <p>إدارة تلاميذ الابتدائي</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الإعدادي')">
                     <h3>الإعدادي</h3>
-                    <p>فتح صفحة التعليم الإعدادي</p>
+                    <p>إدارة تلاميذ الإعدادي</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الثانوي')">
                     <h3>الثانوي</h3>
-                    <p>فتح صفحة التعليم الثانوي</p>
+                    <p>إدارة تلاميذ الثانوي</p>
                 </div>
             </div>
         </div>
 
-        <!-- صفحة مستقلة خاصة بكل سلك -->
+        <!-- صفحة السلك المستقلة (إضافة تلميذ + البحث + الجدول) -->
         <div id="level-page" class="card" style="display:none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
                 <h4 id="selected-level-title" style="color: var(--primary); margin: 0; font-size: 19px;"></h4>
                 <button onclick="closeLevel()" style="background-color: #64748b; padding: 6px 15px; font-size: 13px;">الرجوع للقائمة الرئيسية</button>
             </div>
             
+            <!-- نموذج إضافة تلميذ جديد -->
+            <div class="form-section">
+                <h4 style="color: var(--primary); margin-top: 0; margin-bottom: 15px;">➕ إضافة تلميذ جديد لهذا السلك</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="form-group" style="margin:0;">
+                        <label>كود مسار</label>
+                        <input type="text" id="newMassar" placeholder="مثال: M12345" />
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>الاسم الشخصي</label>
+                        <input type="text" id="newFirstName" placeholder="الاسم الشخصي" />
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>الاسم العائلي</label>
+                        <input type="text" id="newLastName" placeholder="الاسم العائلي" />
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>الصف الدراسي</label>
+                        <input type="text" id="newClass" placeholder="مثال: الثالث ابتدائي (أ)" />
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>تاريخ التسجيل</label>
+                        <input type="date" id="newDate" />
+                    </div>
+                </div>
+                <button onclick="addNewStudent()" style="margin-top: 15px; width: 100%;">حفظ وإضافة التلميذ للقاعدة</button>
+                <div id="form-msg"></div>
+            </div>
+
             <!-- محرك البحث الذكي -->
             <div class="search-box">
                 <label>بحث سريع في التلاميذ:</label>
@@ -132,6 +162,7 @@
                             <th>الاسم العائلي</th>
                             <th>المستوى الدراسي</th>
                             <th>الصف الدراسي</th>
+                            <th>تاريخ التسجيل</th>
                         </tr>
                     </thead>
                     <tbody id="students-table-body">
@@ -150,29 +181,7 @@
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const sampleStudents = {
-            'التعليم الأولي': [
-                { مسار: 'M1001', الاسم: 'يوسف', العائلة: 'المنصوري', المستوى: 'التعليم الأولي', الصف: 'التمهيدي الأول (أ)' },
-                { مسار: 'M1002', الاسم: 'فاطمة الزهراء', العائلة: 'العزاوي', المستوى: 'التعليم الأولي', الصف: 'التمهيدي الثاني (ب)' },
-                { مسار: 'M1003', الاسم: 'عمر', العائلة: 'البدري', المستوى: 'التعليم الأولي', الصف: 'التمهيدي الأول (أ)' }
-            ],
-            'التعليم الابتدائي': [
-                { مسار: 'P2001', الاسم: 'أمين', العائلة: 'العلوي', المستوى: 'التعليم الابتدائي', الصف: 'الثالث ابتدائي (أ)' },
-                { مسار: 'P2002', الاسم: 'مريم', العائلة: 'الصديقي', المستوى: 'التعليم الابتدائي', الصف: 'الخامس ابتدائي (ب)' },
-                { مسار: 'P2003', الاسم: 'حمزة', العائلة: 'الراجي', المستوى: 'التعليم الابتدائي', الصف: 'السادس ابتدائي (أ)' }
-            ],
-            'التعليم الإعدادي': [
-                { مسار: 'C3001', الاسم: 'سارة', العائلة: 'البريكي', المستوى: 'التعليم الإعدادي', الصف: 'الأولى إعدادي (1)' },
-                { مسار: 'C3002', الاسم: 'مهدي', العائلة: 'العتيق', المستوى: 'التعليم الإعدادي', الصف: 'الثانية إعدادي (2)' },
-                { مسار: 'C3003', الاسم: 'إيناس', العائلة: 'حماني', المستوى: 'التعليم الإعدادي', الصف: 'الثالثة إعدادي (1)' }
-            ],
-            'التعليم الثانوي': [
-                { مسار: 'S4001', الاسم: 'أيوب', العائلة: 'الزكي', المستوى: 'التعليم الثانوي', الصف: 'جذع مشترك علمي' },
-                { مسار: 'S4002', الاسم: 'هبة', العائلة: 'الناصر', المستوى: 'التعليم الثانوي', الصف: 'الأولى باكالوريا علوم' },
-                { مسار: 'S4003', الاسم: 'ياسين', العائلة: 'الفيلالي', المستوى: 'التعليم الثانوي', الصف: 'الثانية باكالوريا فيزياء' }
-            ]
-        };
-
+        let allStudents = [];
         let currentActiveLevel = '';
 
         async function checkUser() {
@@ -211,15 +220,85 @@
             document.getElementById('user-email-display').innerText = email;
         }
 
-        function openLevel(levelName) {
+        async function openLevel(levelName) {
             currentActiveLevel = levelName;
             document.getElementById('dashboard-main').style.display = 'none';
             document.getElementById('level-page').style.display = 'block';
             document.getElementById('selected-level-title').innerText = "صفحة تدبير: " + levelName;
             document.getElementById('searchInput').value = '';
+            document.getElementById('form-msg').innerText = '';
             
-            renderTable(sampleStudents[levelName] || []);
+            // تعيين تاريخ اليوم افتراضياً في حقل تاريخ التسجيل
+            document.getElementById('newDate').valueAsDate = new Date();
+            
+            await fetchStudents();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function fetchStudents() {
+            const tbody = document.getElementById('students-table-body');
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">جارٍ تحميل البيانات...</td></tr>`;
+
+            const { data, error } = await _supabase
+                .from('students')
+                .select('*')
+                .eq('level', currentActiveLevel);
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 20px;">خطأ في جلب البيانات: ${error.message}</td></tr>`;
+                allStudents = [];
+            } else {
+                allStudents = data || [];
+                renderTable(allStudents);
+            }
+        }
+
+        async function addNewStudent() {
+            const massar = document.getElementById('newMassar').value.trim();
+            const firstName = document.getElementById('newFirstName').value.trim();
+            const lastName = document.getElementById('newLastName').value.trim();
+            const className = document.getElementById('newClass').value.trim();
+            const regDate = document.getElementById('newDate').value;
+            const formMsg = document.getElementById('form-msg');
+
+            if (!massar || !firstName || !lastName || !className || !regDate) {
+                formMsg.style.color = '#ef4444';
+                formMsg.innerText = "المرجو ملء جميع الحقول المطلوبة لإضافة التلميذ.";
+                return;
+            }
+
+            formMsg.style.color = '#3b82f6';
+            formMsg.innerText = "جارٍ حفظ بيانات التلميذ...";
+
+            const { error } = await _supabase
+                .from('students')
+                .insert([
+                    { 
+                        massar_code: massar, 
+                        first_name: firstName, 
+                        last_name: lastName, 
+                        level: currentActiveLevel, 
+                        class_name: className, 
+                        registration_date: regDate 
+                    }
+                ]);
+
+            if (error) {
+                formMsg.style.color = '#ef4444';
+                formMsg.innerText = "خطأ أثناء الحفظ: " + error.message;
+            } else {
+                formMsg.style.color = '#10b981';
+                formMsg.innerText = "تمت إضافة التلميذ بنجاح!";
+                
+                // تفريغ الحقول
+                document.getElementById('newMassar').value = '';
+                document.getElementById('newFirstName').value = '';
+                document.getElementById('newLastName').value = '';
+                document.getElementById('newClass').value = '';
+
+                // إعادة تحميل الجدول فوراً لتظهر البيانات المضافة
+                await fetchStudents();
+            }
         }
 
         function closeLevel() {
@@ -233,17 +312,18 @@
             tbody.innerHTML = '';
             
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">لا توجد نتائج مطابقة للبحث</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات تلاميذ مسجلة لهذا المستوى حالياً</td></tr>`;
                 return;
             }
 
             students.forEach(st => {
                 const row = `<tr>
-                    <td><strong>${st.مسار}</strong></td>
-                    <td>${st.الاسم}</td>
-                    <td>${st.العائلة}</td>
-                    <td>${st.المستوى}</td>
-                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.الصف}</span></td>
+                    <td><strong>${st.massar_code || ''}</strong></td>
+                    <td>${st.first_name || ''}</td>
+                    <td>${st.last_name || ''}</td>
+                    <td>${st.level || ''}</td>
+                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.class_name || ''}</span></td>
+                    <td>${st.registration_date || ''}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
@@ -251,15 +331,17 @@
 
         function filterStudents() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const students = sampleStudents[currentActiveLevel] || [];
             
-            const filtered = students.filter(st => 
-                st.مسار.toLowerCase().includes(query) ||
-                st.الاسم.toLowerCase().includes(query) ||
-                st.العائلة.toLowerCase().includes(query) ||
-                st.المستوى.toLowerCase().includes(query) ||
-                st.الصف.toLowerCase().includes(query)
-            );
+            const filtered = allStudents.filter(st => {
+                const m = (st.massar_code || '').toLowerCase();
+                const f = (st.first_name || '').toLowerCase();
+                const l = (st.last_name || '').toLowerCase();
+                const lvl = (st.level || '').toLowerCase();
+                const cls = (st.class_name || '').toLowerCase();
+                const date = (st.registration_date || '').toLowerCase();
+
+                return m.includes(query) || f.includes(query) || l.includes(query) || lvl.includes(query) || cls.includes(query) || date.includes(query);
+            });
 
             renderTable(filtered);
         }
