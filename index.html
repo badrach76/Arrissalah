@@ -242,7 +242,7 @@
             const { data, error } = await _supabase
                 .from('students')
                 .select('*')
-                .eq('المستوى', currentActiveLevel);
+                .eq('level', currentActiveLevel);
 
             if (error) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 20px;">خطأ في جلب البيانات: ${error.message}</td></tr>`;
@@ -274,12 +274,12 @@
                 .from('students')
                 .insert([
                     { 
-                        مسار: massar, 
-                        الاسم: firstName, 
-                        العائلة: lastName, 
-                        المستوى: currentActiveLevel, 
-                        الصف: className, 
-                        تاريخ_التسجيل: regDate 
+                        massar_code: massar, 
+                        first_name: firstName, 
+                        last_name: lastName, 
+                        level: currentActiveLevel, 
+                        class_name: className, 
+                        registration_date: regDate 
                     }
                 ]);
 
@@ -316,12 +316,12 @@
 
             students.forEach(st => {
                 const row = `<tr>
-                    <td><strong>${st.مسار || ''}</strong></td>
-                    <td>${st.الاسم || ''}</td>
-                    <td>${st.العائلة || ''}</td>
-                    <td>${st.المستوى || ''}</td>
-                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.الصف || ''}</span></td>
-                    <td>${st.تاريخ_التسجيل || ''}</td>
+                    <td><strong>${st.massar_code || ''}</strong></td>
+                    <td>${st.first_name || ''}</td>
+                    <td>${st.last_name || ''}</td>
+                    <td>${st.level || ''}</td>
+                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.class_name || ''}</span></td>
+                    <td>${st.registration_date || ''}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
@@ -331,12 +331,12 @@
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             
             const filtered = allStudents.filter(st => {
-                const m = (st.مسار || '').toLowerCase();
-                const f = (st.الاسم || '').toLowerCase();
-                const l = (st.العائلة || '').toLowerCase();
-                const lvl = (st.المستوى || '').toLowerCase();
-                const cls = (st.الصف || '').toLowerCase();
-                const date = (st.تاريخ_التسجيل || '').toLowerCase();
+                const m = (st.massar_code || '').toLowerCase();
+                const f = (st.first_name || '').toLowerCase();
+                const l = (st.last_name || '').toLowerCase();
+                const lvl = (st.level || '').toLowerCase();
+                const cls = (st.class_name || '').toLowerCase();
+                const date = (st.registration_date || '').toLowerCase();
 
                 return m.includes(query) || f.includes(query) || l.includes(query) || lvl.includes(query) || cls.includes(query) || date.includes(query);
             });
