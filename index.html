@@ -55,114 +55,115 @@
         .user-info { display: flex; justify-content: space-between; align-items: center; background: #eff6ff; padding: 12px 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #dbeafe; }
         .user-info span { color: var(--primary); font-weight: 600; }
         #message, #form-msg { margin-top: 10px; text-align: center; color: #ef4444; font-weight: 600; font-size: 13px; }
+        .fr-text { font-size: 11px; color: #64748b; display: block; font-weight: normal; }
     </style>
 </head>
 <body>
 
     <div class="header-banner">
         <h1>مؤسسة الرسالة للتعليم الخصوصي</h1>
-        <p>منصة الإدارة والتدبير التربوي الرقمي</p>
+        <p>Groupe Scolaire Al-Risala - Gestion Scolaire</p>
     </div>
 
     <div class="container">
         
         <!-- نموذج تسجيل الدخول -->
         <div id="login-form" class="card" style="max-width: 420px; margin: 40px auto;">
-            <h2>تسجيل الدخول للإدارة</h2>
+            <h2>تسجيل الدخول للإدارة <span class="fr-text">Connexion Administrative</span></h2>
             <div class="form-group" style="margin-top: 20px;">
-                <label>البريد الإلكتروني</label>
+                <label>البريد الإلكتروني <span class="fr-text">Email</span></label>
                 <input type="email" id="email" placeholder="name@school.com" />
             </div>
             <div class="form-group">
-                <label>كلمة المرور</label>
+                <label>كلمة المرور <span class="fr-text">Mot de passe</span></label>
                 <input type="password" id="password" placeholder="••••••••" />
             </div>
-            <button onclick="handleLogin()" style="width: 100%;">دخول آمن</button>
+            <button onclick="handleLogin()" style="width: 100%;">دخول آمن / Connexion</button>
             <div id="message"></div>
         </div>
 
         <!-- لوحة التحكم الرئيسية والمستويات -->
         <div id="dashboard-main" class="card" style="display:none;">
             <div class="user-info">
-                <div>المستخدم: <span id="user-email-display"></span></div>
-                <button class="logout-btn" onclick="handleLogout()">تسجيل الخروج</button>
+                <div>المستخدم (Utilisateur): <span id="user-email-display"></span></div>
+                <button class="logout-btn" onclick="handleLogout()">تسجيل الخروج (Déconnexion)</button>
             </div>
 
-            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 20px;">المستويات التعليمية</h3>
-            <p style="color: #64748b; margin-top: 0; font-size: 14px;">اختر السلك التعليمي لإدارة التلاميذ وإضافة بياناتهم:</p>
+            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 20px;">المستويات الدراسية <span class="fr-text">Niveaux Scolaires</span></h3>
+            <p style="color: #64748b; margin-top: 0; font-size: 14px;">اختر السلك التعليمي لإدارة التلاميذ وأقسامهم:</p>
             
             <div class="levels-grid">
                 <div class="level-card" onclick="openLevel('التعليم الأولي')">
                     <h3>التعليم الأولي</h3>
-                    <p>إدارة تلاميذ الأولي</p>
+                    <p>Préscolaire</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الابتدائي')">
                     <h3>الابتدائي</h3>
-                    <p>إدارة تلاميذ الابتدائي</p>
+                    <p>Primaire</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الإعدادي')">
                     <h3>الإعدادي</h3>
-                    <p>إدارة تلاميذ الإعدادي</p>
+                    <p>Collège</p>
                 </div>
                 <div class="level-card" onclick="openLevel('التعليم الثانوي')">
                     <h3>الثانوي</h3>
-                    <p>إدارة تلاميذ الثانوي</p>
+                    <p>Lycée</p>
                 </div>
             </div>
         </div>
 
-        <!-- صفحة السلك المستقلة (إضافة تلميذ + البحث + الجدول) -->
+        <!-- صفحة السلك المستقلة -->
         <div id="level-page" class="card" style="display:none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
                 <h4 id="selected-level-title" style="color: var(--primary); margin: 0; font-size: 19px;"></h4>
-                <button onclick="closeLevel()" style="background-color: #64748b; padding: 6px 15px; font-size: 13px;">الرجوع للقائمة الرئيسية</button>
+                <button onclick="closeLevel()" style="background-color: #64748b; padding: 6px 15px; font-size: 13px;">الرجوع للقائمة / Retour</button>
             </div>
             
             <!-- نموذج إضافة تلميذ جديد -->
             <div class="form-section">
-                <h4 style="color: var(--primary); margin-top: 0; margin-bottom: 15px;">➕ إضافة تلميذ جديد لهذا السلك</h4>
+                <h4 style="color: var(--primary); margin-top: 0; margin-bottom: 15px;">➕ إضافة تلميذ جديد <span class="fr-text">Ajouter un Nouvel Élève</span></h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                     <div class="form-group" style="margin:0;">
-                        <label>كود مسار</label>
+                        <label>كود مسار <span class="fr-text">Code Massar</span></label>
                         <input type="text" id="newMassar" placeholder="مثال: M12345" />
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>الاسم الشخصي</label>
+                        <label>الاسم الشخصي <span class="fr-text">Prénom</span></label>
                         <input type="text" id="newFirstName" placeholder="الاسم الشخصي" />
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>الاسم العائلي</label>
+                        <label>الاسم العائلي <span class="fr-text">Nom de famille</span></label>
                         <input type="text" id="newLastName" placeholder="الاسم العائلي" />
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>الصف الدراسي</label>
-                        <input type="text" id="newClass" placeholder="مثال: الثالث ابتدائي (أ)" />
+                        <label>القسم الدراسي <span class="fr-text">Classe (ex: 1ère A)</span></label>
+                        <input type="text" id="newClass" placeholder="مثال: القسم الأول أ" />
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>تاريخ التسجيل</label>
+                        <label>تاريخ التسجيل <span class="fr-text">Date d'inscription</span></label>
                         <input type="date" id="newDate" />
                     </div>
                 </div>
-                <button onclick="addNewStudent()" style="margin-top: 15px; width: 100%;">حفظ وإضافة التلميذ للقاعدة</button>
+                <button onclick="addNewStudent()" style="margin-top: 15px; width: 100%;">حفظ وإضافة التلميذ / Enregistrer</button>
                 <div id="form-msg"></div>
             </div>
 
             <!-- محرك البحث الذكي -->
             <div class="search-box">
-                <label>بحث سريع في التلاميذ:</label>
-                <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="ابحث بكود مسار، الاسم، العائلة، أو الصف..." />
+                <label>بحث سريع في التلاميذ <span class="fr-text">Recherche Rapide (Massar, Nom, Prénom, Classe...)</span></label>
+                <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="ابحث بكود مسار، الاسم، العائلة، أو القسم الدراسي..." />
             </div>
 
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>كود مسار</th>
-                            <th>الاسم الشخصي</th>
-                            <th>الاسم العائلي</th>
-                            <th>المستوى الدراسي</th>
-                            <th>الصف الدراسي</th>
-                            <th>تاريخ التسجيل</th>
+                            <th>كود مسار <span class="fr-text">Massar</span></th>
+                            <th>الاسم الشخصي <span class="fr-text">Prénom</span></th>
+                            <th>الاسم العائلي <span class="fr-text">Nom</span></th>
+                            <th>المستوى الدراسي <span class="fr-text">Niveau</span></th>
+                            <th>القسم الدراسي <span class="fr-text">Classe</span></th>
+                            <th>تاريخ التسجيل <span class="fr-text">Date d'inscription</span></th>
                         </tr>
                     </thead>
                     <tbody id="students-table-body">
@@ -199,7 +200,7 @@
             const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
             
             if (error) {
-                msg.innerText = "خطأ في بيانات الدخول: " + error.message;
+                msg.innerText = "خطأ في بيانات الدخول / Erreur de connexion: " + error.message;
             } else {
                 msg.innerText = "";
                 showDashboard(data.user.email);
@@ -224,11 +225,10 @@
             currentActiveLevel = levelName;
             document.getElementById('dashboard-main').style.display = 'none';
             document.getElementById('level-page').style.display = 'block';
-            document.getElementById('selected-level-title').innerText = "صفحة تدبير: " + levelName;
+            document.getElementById('selected-level-title').innerText = "فضاء تدبير سلك: " + levelName;
             document.getElementById('searchInput').value = '';
             document.getElementById('form-msg').innerText = '';
             
-            // تعيين تاريخ اليوم افتراضياً في حقل تاريخ التسجيل
             document.getElementById('newDate').valueAsDate = new Date();
             
             await fetchStudents();
@@ -237,12 +237,12 @@
 
         async function fetchStudents() {
             const tbody = document.getElementById('students-table-body');
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">جارٍ تحميل البيانات...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">جارٍ تحميل البيانات / Chargement...</td></tr>`;
 
             const { data, error } = await _supabase
                 .from('students')
                 .select('*')
-                .eq('level', currentActiveLevel);
+                .eq('المستوى', currentActiveLevel);
 
             if (error) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 20px;">خطأ في جلب البيانات: ${error.message}</td></tr>`;
@@ -263,40 +263,38 @@
 
             if (!massar || !firstName || !lastName || !className || !regDate) {
                 formMsg.style.color = '#ef4444';
-                formMsg.innerText = "المرجو ملء جميع الحقول المطلوبة لإضافة التلميذ.";
+                formMsg.innerText = "المرجو ملء جميع الحقول المطلوبة / Veuillez remplir tous les champs.";
                 return;
             }
 
             formMsg.style.color = '#3b82f6';
-            formMsg.innerText = "جارٍ حفظ بيانات التلميذ...";
+            formMsg.innerText = "جارٍ حفظ بيانات التلميذ / Enregistrement en cours...";
 
             const { error } = await _supabase
                 .from('students')
                 .insert([
                     { 
-                        massar_code: massar, 
-                        first_name: firstName, 
-                        last_name: lastName, 
-                        level: currentActiveLevel, 
-                        class_name: className, 
-                        registration_date: regDate 
+                        مسار: massar, 
+                        الاسم: firstName, 
+                        العائلة: lastName, 
+                        المستوى: currentActiveLevel, 
+                        الصف: className, 
+                        تاريخ_التسجيل: regDate 
                     }
                 ]);
 
             if (error) {
                 formMsg.style.color = '#ef4444';
-                formMsg.innerText = "خطأ أثناء الحفظ: " + error.message;
+                formMsg.innerText = "خطأ أثناء الحفظ / Erreur: " + error.message;
             } else {
                 formMsg.style.color = '#10b981';
-                formMsg.innerText = "تمت إضافة التلميذ بنجاح!";
+                formMsg.innerText = "تمت إضافة التلميذ بنجاح! / Élève ajouté avec succès!";
                 
-                // تفريغ الحقول
                 document.getElementById('newMassar').value = '';
                 document.getElementById('newFirstName').value = '';
                 document.getElementById('newLastName').value = '';
                 document.getElementById('newClass').value = '';
 
-                // إعادة تحميل الجدول فوراً لتظهر البيانات المضافة
                 await fetchStudents();
             }
         }
@@ -312,18 +310,18 @@
             tbody.innerHTML = '';
             
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات تلاميذ مسجلة لهذا المستوى حالياً</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات تلاميذ مسجلة لهذا المستوى حالياً / Aucun élève trouvé.</td></tr>`;
                 return;
             }
 
             students.forEach(st => {
                 const row = `<tr>
-                    <td><strong>${st.massar_code || ''}</strong></td>
-                    <td>${st.first_name || ''}</td>
-                    <td>${st.last_name || ''}</td>
-                    <td>${st.level || ''}</td>
-                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.class_name || ''}</span></td>
-                    <td>${st.registration_date || ''}</td>
+                    <td><strong>${st.مسار || ''}</strong></td>
+                    <td>${st.الاسم || ''}</td>
+                    <td>${st.العائلة || ''}</td>
+                    <td>${st.المستوى || ''}</td>
+                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.الصف || ''}</span></td>
+                    <td>${st.تاريخ_التسجيل || ''}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
@@ -333,12 +331,12 @@
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             
             const filtered = allStudents.filter(st => {
-                const m = (st.massar_code || '').toLowerCase();
-                const f = (st.first_name || '').toLowerCase();
-                const l = (st.last_name || '').toLowerCase();
-                const lvl = (st.level || '').toLowerCase();
-                const cls = (st.class_name || '').toLowerCase();
-                const date = (st.registration_date || '').toLowerCase();
+                const m = (st.مسار || '').toLowerCase();
+                const f = (st.الاسم || '').toLowerCase();
+                const l = (st.العائلة || '').toLowerCase();
+                const lvl = (st.المستوى || '').toLowerCase();
+                const cls = (st.الصف || '').toLowerCase();
+                const date = (st.تاريخ_التسجيل || '').toLowerCase();
 
                 return m.includes(query) || f.includes(query) || l.includes(query) || lvl.includes(query) || cls.includes(query) || date.includes(query);
             });
