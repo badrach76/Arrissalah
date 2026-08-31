@@ -52,6 +52,12 @@
         th { background-color: #f1f5f9; color: var(--primary); font-weight: 600; }
         tr:hover { background-color: #f8fafc; }
 
+        .action-btns { display: flex; gap: 5px; }
+        .edit-btn { background-color: #3b82f6; padding: 6px 10px; font-size: 12px; border-radius: 4px; }
+        .edit-btn:hover { background-color: #2563eb; }
+        .delete-btn { background-color: #ef4444; padding: 6px 10px; font-size: 12px; border-radius: 4px; }
+        .delete-btn:hover { background-color: #dc2626; }
+
         .user-info { display: flex; justify-content: space-between; align-items: center; background: #eff6ff; padding: 12px 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #dbeafe; }
         .user-info span { color: var(--primary); font-weight: 600; }
         #message, #form-msg { margin-top: 10px; text-align: center; color: #ef4444; font-weight: 600; font-size: 13px; }
@@ -119,9 +125,10 @@
                 <button onclick="closeLevel()" style="background-color: #64748b; padding: 6px 15px; font-size: 13px;">الرجوع للقائمة / Retour</button>
             </div>
             
-            <!-- نموذج إضافة تلميذ جديد -->
+            <!-- نموذج إضافة أو تعديل تلميذ -->
             <div class="form-section">
-                <h4 style="color: var(--primary); margin-top: 0; margin-bottom: 15px;">➕ إضافة تلميذ جديد <span class="fr-text">Ajouter un Nouvel Élève</span></h4>
+                <h4 id="form-title" style="color: var(--primary); margin-top: 0; margin-bottom: 15px;">➕ إضافة تلميذ جديد <span class="fr-text">Ajouter un Nouvel Élève</span></h4>
+                <input type="hidden" id="editStudentId" />
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                     <div class="form-group" style="margin:0;">
                         <label>كود مسار <span class="fr-text">Code Massar</span></label>
@@ -144,7 +151,10 @@
                         <input type="date" id="newDate" />
                     </div>
                 </div>
-                <button onclick="addNewStudent()" style="margin-top: 15px; width: 100%;">حفظ وإضافة التلميذ / Enregistrer</button>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button id="save-btn" onclick="saveStudent()" style="flex: 1;">حفظ وإضافة التلميذ / Enregistrer</button>
+                    <button id="cancel-edit-btn" onclick="resetForm()" style="background-color: #64748b; display: none;">إلغاء التعديل / Annuler</button>
+                </div>
                 <div id="form-msg"></div>
             </div>
 
@@ -164,6 +174,7 @@
                             <th>المستوى الدراسي <span class="fr-text">Niveau</span></th>
                             <th>القسم الدراسي <span class="fr-text">Classe</span></th>
                             <th>تاريخ التسجيل <span class="fr-text">Date d'inscription</span></th>
+                            <th>الإجراءات <span class="fr-text">Actions</span></th>
                         </tr>
                     </thead>
                     <tbody id="students-table-body">
@@ -227,9 +238,7 @@
             document.getElementById('level-page').style.display = 'block';
             document.getElementById('selected-level-title').innerText = "فضاء تدبير سلك: " + levelName;
             document.getElementById('searchInput').value = '';
-            document.getElementById('form-msg').innerText = '';
-            
-            document.getElementById('newDate').valueAsDate = new Date();
+            resetForm();
             
             await fetchStudents();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -237,15 +246,15 @@
 
         async function fetchStudents() {
             const tbody = document.getElementById('students-table-body');
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">جارٍ تحميل البيانات / Chargement...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">جارٍ تحميل البيانات / Chargement...</td></tr>`;
 
             const { data, error } = await _supabase
                 .from('students')
                 .select('*')
-                .eq('level', currentActiveLevel);
+                .eq('المستوى', currentActiveLevel);
 
             if (error) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 20px;">خطأ في جلب البيانات: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 20px;">خطأ في جلب البيانات: ${error.message}</td></tr>`;
                 allStudents = [];
             } else {
                 allStudents = data || [];
@@ -253,7 +262,8 @@
             }
         }
 
-        async function addNewStudent() {
+        async function saveStudent() {
+            const id = document.getElementById('editStudentId').value;
             const massar = document.getElementById('newMassar').value.trim();
             const firstName = document.getElementById('newFirstName').value.trim();
             const lastName = document.getElementById('newLastName').value.trim();
@@ -268,35 +278,96 @@
             }
 
             formMsg.style.color = '#3b82f6';
-            formMsg.innerText = "جارٍ حفظ بيانات التلميذ / Enregistrement en cours...";
+            formMsg.innerText = "جارٍ الحفظ / Enregistrement en cours...";
 
-            const { error } = await _supabase
-                .from('students')
-                .insert([
-                    { 
-                        massar_code: massar, 
-                        first_name: firstName, 
-                        last_name: lastName, 
-                        level: currentActiveLevel, 
-                        class_name: className, 
-                        registration_date: regDate 
-                    }
-                ]);
+            let error;
+            if (id) {
+                // تعديل تلميذ موجود
+                const res = await _supabase
+                    .from('students')
+                    .update({ 
+                        مسار: massar, 
+                        الاسم: firstName, 
+                        العائلة: lastName, 
+                        الصف: className, 
+                        تاريخ_التسجيل: regDate 
+                    })
+                    .eq('id', id);
+                error = res.error;
+            } else {
+                // إضافة تلميذ جديد
+                const res = await _supabase
+                    .from('students')
+                    .insert([
+                        { 
+                            مسار: massar, 
+                            الاسم: firstName, 
+                            العائلة: lastName, 
+                            المستوى: currentActiveLevel, 
+                            الصف: className, 
+                            تاريخ_التسجيل: regDate 
+                        }
+                    ]);
+                error = res.error;
+            }
 
             if (error) {
                 formMsg.style.color = '#ef4444';
                 formMsg.innerText = "خطأ أثناء الحفظ / Erreur: " + error.message;
             } else {
                 formMsg.style.color = '#10b981';
-                formMsg.innerText = "تمت إضافة التلميذ بنجاح! / Élève ajouté avec succès!";
+                formMsg.innerText = id ? "تمت تعديل بيانات التلميذ بنجاح!" : "تمت إضافة التلميذ بنجاح!";
                 
-                document.getElementById('newMassar').value = '';
-                document.getElementById('newFirstName').value = '';
-                document.getElementById('newLastName').value = '';
-                document.getElementById('newClass').value = '';
-
+                resetForm();
                 await fetchStudents();
             }
+        }
+
+        function editStudent(id) {
+            const student = allStudents.find(st => st.id == id);
+            if (!student) return;
+
+            document.getElementById('editStudentId').value = student.id;
+            document.getElementById('newMassar').value = student.مسار || '';
+            document.getElementById('newFirstName').value = student.الاسم || '';
+            document.getElementById('newLastName').value = student.العائلة || '';
+            document.getElementById('newClass').value = student.الصف || '';
+            document.getElementById('newDate').value = student.تاريخ_التسجيل || '';
+
+            document.getElementById('form-title').innerHTML = `✏️ تعديل بيانات التلميذ <span class="fr-text">Modifier les informations</span>`;
+            document.getElementById('save-btn').innerText = "تحديث البيانات / Mettre à jour";
+            document.getElementById('cancel-edit-btn').style.display = 'block';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function deleteStudent(id) {
+            if (!confirm("هل أنت متأكد من حذف هذا التلميذ؟ / Êtes-vous sûr de vouloir supprimer cet élève ?")) return;
+
+            const { error } = await _supabase
+                .from('students')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                alert("خطأ أثناء الحذف: " + error.message);
+            } else {
+                await fetchStudents();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('editStudentId').value = '';
+            document.getElementById('newMassar').value = '';
+            document.getElementById('newFirstName').value = '';
+            document.getElementById('newLastName').value = '';
+            document.getElementById('newClass').value = '';
+            document.getElementById('newDate').valueAsDate = new Date();
+            document.getElementById('form-msg').innerText = '';
+
+            document.getElementById('form-title').innerHTML = `➕ إضافة تلميذ جديد <span class="fr-text">Ajouter un Nouvel Élève</span>`;
+            document.getElementById('save-btn').innerText = "حفظ وإضافة التلميذ / Enregistrer";
+            document.getElementById('cancel-edit-btn').style.display = 'none';
         }
 
         function closeLevel() {
@@ -310,41 +381,14 @@
             tbody.innerHTML = '';
             
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات تلاميذ مسجلة لهذا المستوى حالياً / Aucun élève trouvé.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات تلاميذ مسجلة لهذا المستوى حالياً / Aucun élève trouvé.</td></tr>`;
                 return;
             }
 
             students.forEach(st => {
                 const row = `<tr>
-                    <td><strong>${st.massar_code || ''}</strong></td>
-                    <td>${st.first_name || ''}</td>
-                    <td>${st.last_name || ''}</td>
-                    <td>${st.level || ''}</td>
-                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.class_name || ''}</span></td>
-                    <td>${st.registration_date || ''}</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-        }
-
-        function filterStudents() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            const filtered = allStudents.filter(st => {
-                const m = (st.massar_code || '').toLowerCase();
-                const f = (st.first_name || '').toLowerCase();
-                const l = (st.last_name || '').toLowerCase();
-                const lvl = (st.level || '').toLowerCase();
-                const cls = (st.class_name || '').toLowerCase();
-                const date = (st.registration_date || '').toLowerCase();
-
-                return m.includes(query) || f.includes(query) || l.includes(query) || lvl.includes(query) || cls.includes(query) || date.includes(query);
-            });
-
-            renderTable(filtered);
-        }
-
-        checkUser();
-    </script>
-</body>
-</html>
+                    <td><strong>${st.مسار || ''}</strong></td>
+                    <td>${st.الاسم || ''}</td>
+                    <td>${st.العائلة || ''}</td>
+                    <td>${st.المستوى || ''}</td>
+         
