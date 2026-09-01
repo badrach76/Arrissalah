@@ -1,1036 +1,731 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مؤسسة الرسالة للتعليم الخصوصي</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مؤسسة الرسالة للتعليم الخصوصي</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-:root{
-    --primary:#1e3a8a;
-    --primary-light:#3b82f6;
-    --accent:#10b981;
-    --danger:#ef4444;
-    --warning:#f59e0b;
-    --muted:#64748b;
-    --bg:#f8fafc;
-    --border:#e2e8f0;
-    --card:#ffffff;
-}
+    <!-- مكتبة تصدير ملفات Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-*{
-    box-sizing:border-box;
-}
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #10b981;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+        }
 
-body{
-    margin:0;
-    padding:0;
-    direction:rtl;
-    text-align:right;
-    font-family:"Segoe UI",Tahoma,Arial,sans-serif;
-    background:var(--bg);
-    color:#1e293b;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            text-align: right;
+        }
 
-button,
-input,
-select{
-    font-family:inherit;
-}
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
 
-button{
-    border:0;
-    cursor:pointer;
-}
+        .header-banner h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
 
-.header{
-    background:linear-gradient(
-        135deg,
-        var(--primary),
-        var(--primary-light)
-    );
-    color:white;
-    text-align:center;
-    padding:25px 15px;
-}
+        .header-banner p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
 
-.header h1{
-    margin:0;
-    font-size:24px;
-}
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
 
-.header p{
-    margin:6px 0 0;
-    opacity:.9;
-    font-size:14px;
-}
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
 
-.container{
-    max-width:1050px;
-    margin:25px auto;
-    padding:0 15px;
-}
+        h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-top: 0;
+            font-size: 22px;
+        }
 
-.card{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:25px;
-    margin-bottom:20px;
-    box-shadow:0 8px 20px rgba(15,23,42,.05);
-}
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-.user-bar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    background:#eff6ff;
-    border:1px solid #dbeafe;
-    border-radius:8px;
-    padding:12px 16px;
-    margin-bottom:20px;
-}
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 13px;
+        }
 
-button{
-    background:var(--accent);
-    color:white;
-    padding:11px 18px;
-    border-radius:8px;
-    font-size:14px;
-    font-weight:600;
-}
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background: #fdfdfd;
+        }
 
-button:hover{
-    opacity:.9;
-}
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
 
-.btn-danger{
-    background:var(--danger);
-}
+        button {
+            background-color: var(--accent);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
 
-.btn-secondary{
-    background:#64748b;
-}
+        button:hover {
+            background-color: #059669;
+        }
 
-.btn-primary{
-    background:var(--primary);
-}
+        .logout-btn {
+            background-color: #ef4444;
+            padding: 6px 15px;
+            font-size: 14px;
+        }
 
-.btn-blue{
-    background:#3b82f6;
-}
+        .logout-btn:hover {
+            background-color: #dc2626;
+        }
 
-.btn-warning{
-    background:var(--warning);
-}
+        .excel-btn {
+            background-color: #0d9488;
+            margin-bottom: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.btn-purple{
-    background:#6366f1;
-}
+        .excel-btn:hover {
+            background-color: #0f766e;
+        }
 
-.levels{
-    display:grid;
-    grid-template-columns:
-        repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
-    margin-top:20px;
-}
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-.level-card{
-    background:white;
-    border:2px solid var(--border);
-    border-radius:10px;
-    padding:25px 15px;
-    text-align:center;
-    cursor:pointer;
-    transition:.2s;
-}
+        .level-card {
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-.level-card:hover{
-    transform:translateY(-3px);
-    border-color:var(--primary-light);
-}
+        .level-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-light);
+            box-shadow: 0 10px 15px -3px rgba(59,130,246,0.1);
+        }
 
-.level-card h3{
-    color:var(--primary);
-    margin:0 0 6px;
-}
+        .level-card h3 {
+            margin: 0 0 5px;
+            color: var(--primary);
+            font-size: 17px;
+        }
 
-.level-card p{
-    color:var(--muted);
-    margin:0;
-    font-size:12px;
-}
+        .level-card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 12px;
+        }
 
-.fr{
-    display:block;
-    color:var(--muted);
-    font-size:11px;
-    font-weight:normal;
-}
+        .form-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
 
-.level-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    border-bottom:2px solid #f1f5f9;
-    padding-bottom:12px;
-    margin-bottom:20px;
-}
+        .search-box {
+            margin-bottom: 20px;
+        }
 
-.level-header h2{
-    margin:0;
-    color:var(--primary);
-    font-size:20px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
 
-.tabs{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-bottom:20px;
-}
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-.tab{
-    background:#64748b;
-}
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            font-weight: 600;
+        }
 
-.tab.active{
-    background:var(--primary);
-}
+        tr:hover {
+            background-color: #f8fafc;
+        }
 
-.form-section{
-    background:#f8fafc;
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:20px;
-    margin-bottom:20px;
-}
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:
-        repeat(auto-fit,minmax(190px,1fr));
-    gap:15px;
-}
+        .edit-btn {
+            background-color: #3b82f6;
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
 
-.form-group label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:600;
-    color:#475569;
-    font-size:13px;
-}
+        .edit-btn:hover {
+            background-color: #2563eb;
+        }
 
-input,
-select{
-    width:100%;
-    padding:11px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    background:white;
-    font-size:14px;
-}
+        .delete-btn {
+            background-color: #ef4444;
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
 
-input:focus,
-select:focus{
-    outline:none;
-    border-color:var(--primary-light);
-    box-shadow:0 0 0 3px rgba(59,130,246,.12);
-}
+        .delete-btn:hover {
+            background-color: #dc2626;
+        }
 
-.form-buttons{
-    display:flex;
-    gap:10px;
-    margin-top:15px;
-}
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eff6ff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #dbeafe;
+        }
 
-.form-buttons button:first-child{
-    flex:1;
-}
+        .user-info span {
+            color: var(--primary);
+            font-weight: 600;
+        }
 
-.message{
-    text-align:center;
-    margin-top:10px;
-    font-size:13px;
-    font-weight:600;
-}
+        #message,
+        #form-msg {
+            margin-top: 10px;
+            text-align: center;
+            color: #ef4444;
+            font-weight: 600;
+            font-size: 13px;
+        }
 
-.search{
-    margin-bottom:15px;
-}
+        .fr-text {
+            font-size: 11px;
+            color: #64748b;
+            display: block;
+            font-weight: normal;
+        }
 
-.search label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:600;
-    font-size:13px;
-}
+        /* تنسيق واجهة الحضور */
 
-.excel{
-    background:#0d9488;
-    margin-bottom:15px;
-}
+        .attendance-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-.table-wrap{
-    overflow-x:auto;
-}
+        .attendance-stat {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-    font-size:14px;
-}
+        .attendance-stat strong {
+            display: block;
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 3px;
+        }
 
-th,
-td{
-    padding:11px;
-    border-bottom:1px solid var(--border);
-    text-align:right;
-}
+        .attendance-stat span {
+            color: #64748b;
+            font-size: 12px;
+        }
 
-th{
-    background:#f1f5f9;
-    color:var(--primary);
-}
+        .attendance-status {
+            min-width: 140px;
+            font-weight: 600;
+        }
 
-tr:hover td{
-    background:#f8fafc;
-}
+        .attendance-status option {
+            font-weight: 600;
+        }
 
-.actions{
-    display:flex;
-    gap:5px;
-    flex-wrap:wrap;
-}
+        .attendance-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
 
-.small-btn{
-    padding:6px 10px;
-    font-size:12px;
-}
+        .attendance-actions button {
+            flex: 1;
+            min-width: 180px;
+        }
 
-.attendance-tools{
-    display:grid;
-    grid-template-columns:
-        repeat(auto-fit,minmax(190px,1fr));
-    gap:15px;
-}
+        .present-btn {
+            background-color: #10b981;
+        }
 
-.attendance-actions{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin:20px 0;
-}
+        .absent-btn {
+            background-color: #ef4444;
+        }
 
-.summary{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin:20px 0;
-}
+        .late-btn {
+            background-color: #f59e0b;
+        }
 
-.summary-item{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:10px 18px;
-    text-align:center;
-    min-width:110px;
-}
+        .reset-attendance-btn {
+            background-color: #64748b;
+        }
 
-.summary-item strong{
-    display:block;
-    font-size:19px;
-    margin-top:3px;
-}
+        .attendance-empty {
+            text-align: center;
+            color: #64748b;
+            padding: 30px;
+        }
 
-.attendance-save{
-    width:100%;
-    margin-top:20px;
-    font-size:16px;
-}
+        /* تنسيق واجهة النقاط */
 
-.note{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.8;
-    margin-top:15px;
-}
+        .grades-toolbar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
 
-.hidden{
-    display:none !important;
-}
+        .grades-toolbar .form-group {
+            margin: 0;
+            flex: 1;
+            min-width: 160px;
+        }
 
-@media(max-width:600px){
+        .grade-input {
+            width: 90px;
+            text-align: center;
+        }
 
-    .card{
-        padding:17px;
-    }
+        .grade-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
 
-    .user-bar,
-    .level-header{
-        flex-direction:column;
-        align-items:stretch;
-    }
+        .grade-good { background-color: #10b981; }
+        .grade-mid { background-color: #f59e0b; }
+        .grade-low { background-color: #ef4444; }
 
-    .attendance-actions{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-    }
+        /* تنسيق واجهة الأداء المالي */
 
-    .attendance-actions button{
-        width:100%;
-    }
+        .payments-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-    th,
-    td{
-        padding:8px;
-    }
-}
-</style>
+        .payment-status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .status-paid { background-color: #10b981; }
+        .status-partial { background-color: #f59e0b; }
+        .status-unpaid { background-color: #ef4444; }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 18px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .attendance-actions button {
+                width: 100%;
+            }
+
+            .grades-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            th,
+            td {
+                padding: 9px 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="header">
-    <h1>مؤسسة الرسالة للتعليم الخصوصي</h1>
-    <p>Groupe Scolaire Al-Risala - Gestion Scolaire</p>
-</div>
-
-<div class="container">
-
-<!-- =========================
-     الصفحة الرئيسية
-========================= -->
-
-<div id="dashboard" class="card">
-
-    <div class="user-bar">
-
-        <div>
-            فضاء التعليم - المستويات الدراسية
-            <span class="fr">
-                Enseignement
-            </span>
-        </div>
-
-        <button
-            type="button"
-            class="btn-danger"
-            id="resetBtn"
-        >
-            إعادة تعيين
-        </button>
-
+    <div class="header-banner">
+        <h1>مؤسسة الرسالة للتعليم الخصوصي</h1>
+        <p>Groupe Scolaire Al-Risala - Gestion Scolaire</p>
     </div>
 
-    <h2 style="color:var(--primary);">
-        المستويات الدراسية
-        <span class="fr">Niveaux Scolaires</span>
-    </h2>
+    <div class="container">
 
-    <p style="color:var(--muted);">
-        اختر السلك التعليمي للدخول إلى فضاء التلاميذ:
-    </p>
+        <!-- لوحة التحكم الرئيسية والمستويات -->
 
-    <div class="levels">
+        <div id="dashboard-main" class="card">
 
-        <div class="level-card" data-level="التعليم الأولي">
-            <h3>التعليم الأولي</h3>
-            <p>Préscolaire</p>
-        </div>
+            <div class="user-info">
+                <div>
+                    فضاء التعليم - المستويات الدراسية / Enseignement
+                </div>
 
-        <div class="level-card" data-level="التعليم الابتدائي">
-            <h3>التعليم الابتدائي</h3>
-            <p>Primaire</p>
-        </div>
+                <button class="logout-btn" onclick="handleLogout()">
+                    إعادة تعيين (Réinitialiser)
+                </button>
+            </div>
 
-        <div class="level-card" data-level="التعليم الإعدادي">
-            <h3>التعليم الإعدادي</h3>
-            <p>Collège</p>
-        </div>
-
-        <div class="level-card" data-level="التعليم الثانوي">
-            <h3>التعليم الثانوي</h3>
-            <p>Lycée</p>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =========================
-     صفحة المستوى
-========================= -->
-
-<div id="levelPage" class="card hidden">
-
-    <div class="level-header">
-
-        <h2 id="levelTitle"></h2>
-
-        <button
-            type="button"
-            class="btn-secondary"
-            id="backBtn"
-        >
-            الرجوع للقائمة
-            <span class="fr">Retour</span>
-        </button>
-
-    </div>
-
-
-    <!-- التبويبات -->
-
-    <div class="tabs">
-
-        <button
-            type="button"
-            class="tab active"
-            data-tab="students"
-        >
-            لائحة التلاميذ
-            <span class="fr">Élèves</span>
-        </button>
-
-        <button
-            type="button"
-            class="tab"
-            data-tab="attendance"
-        >
-            الحضور والغياب
-            <span class="fr">Présence</span>
-        </button>
-
-        <button
-            type="button"
-            class="tab"
-            data-tab="grades"
-        >
-            النقاط والنتائج
-            <span class="fr">Notes</span>
-        </button>
-
-        <button
-            type="button"
-            class="tab"
-            data-tab="payments"
-        >
-            الأداء والرسوم
-            <span class="fr">Paiements</span>
-        </button>
-
-    </div>
-
-
-    <!-- =========================
-         التلاميذ
-    ========================= -->
-
-    <div id="studentsTab">
-
-        <div class="form-section">
-
-            <h3
-                id="formTitle"
-                style="color:var(--primary);margin-top:0;"
-            >
-                ➕ إضافة تلميذ جديد
-                <span class="fr">
-                    Ajouter un Nouvel Élève
-                </span>
+            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 20px;">
+                المستويات الدراسية
+                <span class="fr-text">Niveaux Scolaires</span>
             </h3>
 
-            <input
-                type="hidden"
-                id="studentId"
-            >
+            <p style="color: #64748b; margin-top: 0; font-size: 14px;">
+                اختر السلك التعليمي للدخول إلى فضاء التلاميذ:
+            </p>
 
-            <div class="form-grid">
+            <div class="levels-grid">
 
-                <div class="form-group">
-                    <label>
-                        كود مسار
-                        <span class="fr">Code Massar</span>
-                    </label>
-
-                    <input
-                        id="massar"
-                        type="text"
-                        placeholder="مثال: M12345"
-                    >
+                <div class="level-card" onclick="openLevel('التعليم الأولي')">
+                    <h3>التعليم الأولي</h3>
+                    <p>Préscolaire</p>
                 </div>
 
-                <div class="form-group">
-                    <label>
-                        الاسم الشخصي
-                        <span class="fr">Prénom</span>
-                    </label>
-
-                    <input
-                        id="firstName"
-                        type="text"
-                    >
+                <div class="level-card" onclick="openLevel('التعليم الابتدائي')">
+                    <h3>الابتدائي</h3>
+                    <p>Primaire</p>
                 </div>
 
-                <div class="form-group">
-                    <label>
-                        الاسم العائلي
-                        <span class="fr">Nom</span>
-                    </label>
-
-                    <input
-                        id="lastName"
-                        type="text"
-                    >
+                <div class="level-card" onclick="openLevel('التعليم الإعدادي')">
+                    <h3>الإعدادي</h3>
+                    <p>Collège</p>
                 </div>
 
-                <div class="form-group">
-                    <label>
-                        القسم الدراسي
-                        <span class="fr">Classe</span>
-                    </label>
-
-                    <input
-                        id="className"
-                        type="text"
-                        placeholder="مثال: القسم الأول أ"
-                    >
+                <div class="level-card" onclick="openLevel('التعليم الثانوي')">
+                    <h3>الثانوي</h3>
+                    <p>Lycée</p>
                 </div>
 
-                <div class="form-group">
+            </div>
+        </div>
+
+
+        <!-- صفحة السلك وفضاء التلاميذ -->
+
+        <div id="level-page" class="card" style="display:none;">
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #f1f5f9;
+                padding-bottom: 10px;
+            ">
+
+                <h4 id="selected-level-title"
+                    style="color: var(--primary); margin: 0; font-size: 19px;">
+                </h4>
+
+                <button onclick="closeLevel()"
+                        style="background-color: #64748b; padding: 6px 15px; font-size: 13px;">
+                    الرجوع للقائمة / Retour
+                </button>
+
+            </div>
+
+
+            <!-- أزرار التنقل الفرعية -->
+
+            <div style="
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+                flex-wrap: wrap;
+            ">
+
+                <button onclick="switchTab('students')"
+                        id="btn-tab-students"
+                        style="background-color: var(--primary);">
+                    لائحة التلاميذ / Élèves
+                </button>
+
+                <button onclick="switchTab('attendance')"
+                        id="btn-tab-attendance"
+                        style="background-color: #64748b;">
+                    الحضور والغياب / Présence
+                </button>
+
+                <button onclick="switchTab('grades')"
+                        id="btn-tab-grades"
+                        style="background-color: #64748b;">
+                    النقاط والنتائج / Notes
+                </button>
+
+                <button onclick="switchTab('payments')"
+                        id="btn-tab-payments"
+                        style="background-color: #64748b;">
+                    الأداء والرسوم / Paiements
+                </button>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- تبويب التلاميذ -->
+            <!-- ========================= -->
+
+            <div id="tab-content-students">
+
+                <div class="form-section">
+
+                    <h4 id="form-title"
+                        style="color: var(--primary); margin-top: 0; margin-bottom: 15px;">
+
+                        ➕ إضافة تلميذ جديد
+                        <span class="fr-text">Ajouter un Nouvel Élève</span>
+
+                    </h4>
+
+                    <input type="hidden" id="editStudentId" />
+
+                    <div style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                        gap: 15px;
+                    ">
+
+                        <div class="form-group" style="margin:0;">
+                            <label>
+                                كود مسار
+                                <span class="fr-text">Code Massar</span>
+                            </label>
+
+                            <input type="text"
+                                   id="newMassar"
+                                   placeholder="مثال: M12345" />
+                        </div>
+
+
+                        <div class="form-group" style="margin:0;">
+                            <label>
+                                الاسم الشخصي
+                                <span class="fr-text">Prénom</span>
+                            </label>
+
+                            <input type="text"
+                                   id="newFirstName"
+                                   placeholder="الاسم الشخصي" />
+                        </div>
+
+
+                        <div class="form-group" style="margin:0;">
+                            <label>
+                                الاسم العائلي
+                                <span class="fr-text">Nom de famille</span>
+                            </label>
+
+                            <input type="text"
+                                   id="newLastName"
+                                   placeholder="الاسم العائلي" />
+                        </div>
+
+
+                        <div class="form-group" style="margin:0;">
+                            <label>
+                                القسم الدراسي
+                                <span class="fr-text">Classe</span>
+                            </label>
+
+                            <input type="text"
+                                   id="newClass"
+                                   placeholder="مثال: القسم الأول أ" />
+                        </div>
+
+
+                        <div class="form-group" style="margin:0;">
+                            <label>
+                                تاريخ التسجيل
+                                <span class="fr-text">Date d'inscription</span>
+                            </label>
+
+                            <input type="date"
+                                   id="newDate" />
+                        </div>
+
+                    </div>
+
+
+                    <div style="
+                        display: flex;
+                        gap: 10px;
+                        margin-top: 15px;
+                    ">
+
+                        <button id="save-btn"
+                                onclick="saveStudent()"
+                                style="flex: 1;">
+                            حفظ وإضافة التلميذ / Enregistrer
+                        </button>
+
+                        <button id="cancel-edit-btn"
+                                onclick="resetForm()"
+                                style="
+                                    background-color: #64748b;
+                                    display: none;
+                                ">
+                            إلغاء التعديل / Annuler
+                        </button>
+
+                    </div>
+
+                    <div id="form-msg"></div>
+
+                </div>
+
+
+                <!-- Excel -->
+
+                <button class="excel-btn"
+                        onclick="exportTableToExcel()">
+
+                    📥 تنزيل لائحة التلاميذ
+                    (Excel) / Exporter
+
+                </button>
+
+
+                <!-- البحث -->
+
+                <div class="search-box">
+
                     <label>
-                        تاريخ التسجيل
-                        <span class="fr">
-                            Date d'inscription
+                        بحث سريع في التلاميذ
+                        <span class="fr-text">
+                            Recherche Rapide
                         </span>
                     </label>
 
-                    <input
-                        id="registrationDate"
-                        type="date"
-                    >
-                </div>
-
-            </div>
-
-            <div class="form-buttons">
-
-                <button
-                    type="button"
-                    id="saveStudentBtn"
-                >
-                    حفظ التلميذ
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-secondary hidden"
-                    id="cancelEditBtn"
-                >
-                    إلغاء التعديل
-                </button>
-
-            </div>
-
-            <div
-                id="studentMessage"
-                class="message"
-            ></div>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="excel"
-            id="excelBtn"
-        >
-            📥 تنزيل لائحة التلاميذ Excel
-        </button>
-
-
-        <div class="search">
-
-            <label>
-                البحث في التلاميذ
-            </label>
-
-            <input
-                id="studentSearch"
-                type="text"
-                placeholder="ابحث بالاسم أو كود مسار أو القسم..."
-            >
-
-        </div>
-
-
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>كود مسار</th>
-                        <th>الاسم</th>
-                        <th>العائلة</th>
-                        <th>المستوى</th>
-                        <th>القسم</th>
-                        <th>تاريخ التسجيل</th>
-                        <th>الإجراءات</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="studentsBody"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         الحضور
-    ========================= -->
-
-    <div id="attendanceTab" class="hidden">
-
-        <h3 style="color:var(--primary);">
-            📋 سجل الحضور والغياب
-            <span class="fr">
-                Gestion de la Présence
-            </span>
-        </h3>
-
-        <div class="form-section">
-
-            <div class="attendance-tools">
-
-                <div class="form-group">
-
-                    <label>
-                        التاريخ
-                        <span class="fr">Date</span>
-                    </label>
-
-                    <input
-                        id="attendanceDate"
-                        type="date"
-                    >
+                    <input type="text"
+                           id="searchInput"
+                           onkeyup="filterStudents()"
+                           placeholder="ابحث بكود مسار، الاسم، العائلة، أو القسم الدراسي..." />
 
                 </div>
 
 
-                <div class="form-group">
+                <!-- جدول التلاميذ -->
 
-                    <label>
-                        المستوى
-                        <span class="fr">Niveau</span>
-                    </label>
+                <div style="overflow-x: auto;">
 
-                    <input
-                        id="attendanceLevel"
-                        type="text"
-                        readonly
-                    >
+                    <table id="students-table">
 
-                </div>
+                        <thead>
 
+                            <tr>
 
-                <div class="form-group">
+                                <th>
+                                    كود مسار
+                                    <span class="fr-text">Massar</span>
+                                </th>
 
-                    <label>
-                        القسم
-                        <span class="fr">Classe</span>
-                    </label>
+                                <th>
+                                    الاسم الشخصي
+                                    <span class="fr-text">Prénom</span>
+                                </th>
 
-                    <select id="attendanceClass">
+                                <th>
+                                    الاسم العائلي
+                                    <span class="fr-text">Nom</span>
+                                </th>
 
-                        <option value="">
-                            اختر القسم
-                        </option>
+                                <th>
+                                    المستوى الدراسي
+                                    <span class="fr-text">Niveau</span>
+                                </th>
 
-                    </select>
+                                <th>
+                                    القسم الدراسي
+                                    <span class="fr-text">Classe</span>
+                                </th>
 
-                </div>
-
-            </div>
-
-
-            <div class="attendance-actions">
-
-                <button
-                    type="button"
-                    id="allPresent"
-                >
-                    ✓ الكل حاضر
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-danger"
-                    id="allAbsent"
-                >
-                    ✕ الكل غائب
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-warning"
-                    id="allLate"
-                >
-                    ⏱ الكل متأخر
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-purple"
-                    id="allExcused"
-                >
-                    ⚠ الكل غياب مبرر
-                </button>
-
-                <button
-                    type="button"
-                    class="btn-secondary"
-                    id="clearAttendance"
-                >
-                    ↺ مسح الحالات
-                </button>
-
-            </div>
-
-
-            <div class="search">
-
-                <label>
-                    البحث في لائحة الحضور
-                </label>
-
-                <input
-                    id="attendanceSearch"
-                    type="text"
-                    placeholder="ابحث بالاسم أو كود مسار..."
-                >
-
-            </div>
-
-
-            <div class="summary">
-
-                <div class="summary-item">
-                    عدد التلاميذ
-                    <strong id="totalCount">0</strong>
-                </div>
-
-                <div class="summary-item">
-                    حاضر
-                    <strong id="presentCount">0</strong>
-                </div>
-
-                <div class="summary-item">
-                    غائب
-                    <strong id="absentCount">0</strong>
-                </div>
-
-                <div class="summary-item">
-                    متأخر
-                    <strong id="lateCount">0</strong>
-                </div>
-
-            </div>
-
-
-            <div class="table-wrap">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-                            <th>#</th>
-                            <th>كود مسار</th>
-                            <th>التلميذ</th>
-                            <th>القسم</th>
-                            <th>الحالة</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="attendanceBody">
-
-                        <tr>
-                            <td
-                                colspan="5"
-                                style="
-                                    text-align:center;
-                                    color:var(--muted);
-                                    padding:25px;
-                                "
-                            >
-                                اختر القسم لعرض التلاميذ
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="attendance-save"
-                id="saveAttendanceBtn"
-            >
-                💾 حفظ الحضور
-            </button>
-
-
-            <div
-                id="attendanceMessage"
-                class="message"
-            ></div>
-
-
-            <div class="note">
-
-                <strong>ملاحظة:</strong>
-
-                لم يتم تحديد المواد الدراسية بعد،
-                لذلك لا توجد خانة للمادة في هذه المرحلة.
-
-                <br>
-
-                عند تحديد المواد لاحقًا، سيتم تطوير النظام
-                للسماح بتسجيل حضور التلميذ أكثر من مرة
-                في اليوم، حسب المادة أو الحصة.
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         النقط
-    ========================= -->
-
-    <div id="gradesTab" class="hidden">
-
-        <h3 style="color:var(--primary);">
-            إدارة النقط والنتائج الدراسية
-            <span class="fr">Gestion des Notes</span>
-        </h3>
-
-        <p style="color:var(--muted);">
-            سيتم تطوير هذا القسم لاحقًا.
-        </p>
-
-    </div>
-
-
-    <!-- =========================
-         الأداء
-    ========================= -->
-
-    <div id="paymentsTab" class="hidden">
-
-        <h3 style="color:var(--primary);">
-            تتبع الأداء والرسوم
-            <span class="fr">Suivi des Paiements</span>
-        </h3>
-
-        <p style="color:var(--muted);">
-            سيتم تطوير هذا القسم لاحقًا.
-        </p>
-
-    </div>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =====================================================
-   CONFIGURATION
-===================================================== */
-
-const SUPABASE_URL =
-    "https://ginohutluqeprmkrodbb.supabase.co";
-
-const SUPABASE_ANON_KEY =
-    "sb_publishable_HnxeYpiIqU7BXYJ5EfCTtQ_Xtom-SXC";
-
-
-let db = null;
-
-try {
-
-    if (
-        window.supabase &&
-        typeof window.supabase.createClient === "function"
-    ) {
-
-        db =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
-
-    }
-
-} catch(error) {
-
-    console.error(
-        "Supabase initialization error:",
-        error
-    );
-
-}
-
-
-/* =====================================================
-   VARIABLES
-===================================================== */
-
-let currentLevel = "";
-
-let students = [];
-
-let attendanceStudents = [];
-
-
-/* =====================================================
-   DOM READY
-===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function(){
-
-        initializeApplication();
-
-    }
-);
-
-
-/* =====================================================
-   INITIALIZATION
-===============
+                                <th>
+                                    تاريخ التسجيل
+                                    <span class="fr-text">Dat
