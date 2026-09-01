@@ -466,3 +466,394 @@ function renderStudents() {
 
         });
                   }
+async function saveStudent() {
+
+    const massar =
+        document.getElementById("newMassar")
+            .value.trim();
+
+    const firstName =
+        document.getElementById("newFirstName")
+            .value.trim();
+
+    const lastName =
+        document.getElementById("newLastName")
+            .value.trim();
+
+    const className =
+        document.getElementById("newClass")
+            .value.trim();
+
+    const date =
+        document.getElementById("newDate")
+            .value;
+
+    if (!massar || !firstName ||
+        !lastName || !className) {
+
+        showMessage(
+            "formMsg",
+            "المرجو ملء جميع المعلومات المطلوبة.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (!_supabase) {
+
+        showMessage(
+            "formMsg",
+            "قاعدة البيانات غير متاحة.",
+            "error"
+        );
+
+        return;
+    }
+
+    const data = {
+
+        "مسار": massar,
+
+        "الاسم": firstName,
+
+        "العائلة": lastName,
+
+        "المستوى": currentLevel,
+
+        "الصف": className,
+
+        "تاريخ_التسجيل":
+            date || null
+    };
+
+    try {
+
+        let result;
+
+        if (editingStudentId) {
+
+            result = await _supabase
+                .from("students")
+                .update(data)
+                .eq("id", editingStudentId);
+
+        } else {
+
+            result = await _supabase
+                .from("students")
+                .insert([data]);
+
+        }
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        showMessage(
+            "formMsg",
+            editingStudentId
+                ? "تم تعديل معلومات التلميذ بنجاح."
+                : "تمت إضافة التلميذ بنجاح.",
+            "success"
+        );
+
+        resetStudentForm();
+
+        await loadStudents();
+
+    } catch (error) {
+
+        showMessage(
+            "formMsg",
+            error.message ||
+            "تعذر حفظ معلومات التلميذ.",
+            "error"
+        );
+    }
+}
+
+
+function editStudent(id) {
+
+    const student = students.find(
+        function(item) {
+            return String(item.id) === String(id);
+        }
+    );
+
+    if (!student) return;
+
+    editingStudentId = student.id;
+
+    document.getElementById(
+        "editStudentId"
+    ).value = student.id;
+
+    document.getElementById(
+        "newMassar"
+    ).value = student["مسار"] || "";
+
+    document.getElementById(
+        "newFirstName"
+    ).value = student["الاسم"] || "";
+
+    document.getElementById(
+        "newLastName"
+    ).value = student["العائلة"] || "";
+
+    document.getElementById(
+        "newClass"
+    ).value = student["الصف"] || "";
+
+    document.getElementById(
+        "newDate"
+    ).value =
+        student["تاريخ_التسجيل"] || "";
+
+    document.getElementById(
+        "studentFormTitle"
+    ).textContent =
+        "تعديل معلومات التلميذ";
+
+    document.getElementById(
+        "saveStudentBtn"
+    ).textContent =
+        "حفظ التعديل";
+
+    document.getElementById(
+        "cancelEditBtn"
+    ).classList.remove("hidden");
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+async function deleteStudent(id) {
+
+    const student = students.find(
+        function(item) {
+            return String(item.id) === String(id);
+        }
+    );
+
+    if (!student) return;
+
+    const fullName =
+        (student["الاسم"] || "") +
+        " " +
+        (student["العائلة"] || "");
+
+    if (!confirm(
+        "هل تريد حذف التلميذ: " +
+        fullName +
+        " ؟"
+    )) {
+        return;
+    }
+
+    if (!_supabase) {
+
+        showMessage(
+            "formMsg",
+            "قاعدة البيانات غير متاحة.",
+            "error"
+        );
+
+        return;
+    }
+
+    try {
+
+        const result = await _supabase
+            .from("students")
+            .delete()
+            .eq("id", id);
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        showMessage(
+            "formMsg",
+            "تم حذف التلميذ بنجاح.",
+            "success"
+        );
+
+        await loadStudents();
+
+    } catch (error) {
+
+        showMessage(
+            "formMsg",
+            error.message ||
+            "تعذر حذف التلميذ.",
+            "error"
+        );
+    }
+}
+
+
+function resetStudentForm() {
+
+    editingStudentId = null;
+
+    const formTitle =
+        document.getElementById(
+            "studentFormTitle"
+        );
+
+    const editId =
+        document.getElementById(
+            "editStudentId"
+        );
+
+    const massar =
+        document.getElementById(
+            "newMassar"
+        );
+
+    const firstName =
+        document.getElementById(
+            "newFirstName"
+        );
+
+    const lastName =
+        document.getElementById(
+            "newLastName"
+        );
+
+    const className =
+        document.getElementById(
+            "newClass"
+        );
+
+    const date =
+        document.getElementById(
+            "newDate"
+        );
+
+    const saveBtn =
+        document.getElementById(
+            "saveStudentBtn"
+        );
+
+    const cancelBtn =
+        document.getElementById(
+            "cancelEditBtn"
+        );
+
+    if (formTitle) {
+        formTitle.textContent =
+            "إضافة تلميذ جديد";
+    }
+
+    if (editId) {
+        editId.value = "";
+    }
+
+    if (massar) {
+        massar.value = "";
+    }
+
+    if (firstName) {
+        firstName.value = "";
+    }
+
+    if (lastName) {
+        lastName.value = "";
+    }
+
+    if (className) {
+        className.value = "";
+    }
+
+    if (date) {
+
+        date.value =
+            new Date()
+                .toISOString()
+                .split("T")[0];
+    }
+
+    if (saveBtn) {
+        saveBtn.textContent =
+            "إضافة التلميذ";
+    }
+
+    if (cancelBtn) {
+        cancelBtn.classList.add("hidden");
+    }
+}
+
+
+function exportTableToExcel() {
+
+    if (!window.XLSX) {
+
+        showMessage(
+            "formMsg",
+            "مكتبة Excel غير متاحة حاليًا.",
+            "error"
+        );
+
+        return;
+    }
+
+    const rows = students.map(
+        function(student, index) {
+
+            return {
+
+                "رقم":
+                    index + 1,
+
+                "مسار":
+                    student["مسار"] || "",
+
+                "الاسم":
+                    student["الاسم"] || "",
+
+                "العائلة":
+                    student["العائلة"] || "",
+
+                "المستوى":
+                    student["المستوى"] || "",
+
+                "الصف":
+                    student["الصف"] || "",
+
+                "تاريخ التسجيل":
+                    student["تاريخ_التسجيل"] || ""
+            };
+        }
+    );
+
+    const worksheet =
+        XLSX.utils.json_to_sheet(rows);
+
+    const workbook =
+        XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "التلاميذ"
+    );
+
+    const safeLevel =
+        currentLevel.replace(
+            /[\\/:*?"<>|]/g,
+            "_"
+        );
+
+    XLSX.writeFile(
+        workbook,
+        "لائحة_تلاميذ_" +
+        (safeLevel || "المؤسسة") +
+        ".xlsx"
+    );
+            }
