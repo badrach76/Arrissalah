@@ -4,487 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>منصة مؤسسة الرسالة للتعليم الخصوصي</title>
+<title>مؤسسة الرسالة للتعليم الخصوصي</title>
 
-<!-- Supabase -->
+<link rel="stylesheet" href="style.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<style>
-:root{
-    --primary:#1e3a8a;
-    --primary-light:#3b82f6;
-    --accent:#10b981;
-    --danger:#ef4444;
-    --warning:#f59e0b;
-    --purple:#6366f1;
-    --gray:#64748b;
-    --bg:#f8fafc;
-    --text:#1e293b;
-    --border:#e2e8f0;
-    --white:#fff;
-}
-
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    padding:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:"Segoe UI",Tahoma,Arial,sans-serif;
-    direction:rtl;
-}
-
-.header-banner{
-    background:linear-gradient(135deg,var(--primary),var(--primary-light));
-    color:#fff;
-    padding:25px 15px;
-    text-align:center;
-    box-shadow:0 4px 10px rgba(0,0,0,.12);
-}
-
-.header-banner h1{
-    margin:0;
-    font-size:24px;
-}
-
-.header-banner p{
-    margin:6px 0 0;
-    font-size:14px;
-    opacity:.9;
-}
-
-.container{
-    max-width:1100px;
-    margin:30px auto;
-    padding:0 15px;
-}
-
-.card{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:14px;
-    box-shadow:0 8px 20px rgba(0,0,0,.05);
-    padding:25px;
-    margin-bottom:20px;
-}
-
-.hidden{
-    display:none !important;
-}
-
-.user-info{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    background:#eff6ff;
-    border:1px solid #dbeafe;
-    padding:12px 16px;
-    border-radius:9px;
-    margin-bottom:25px;
-}
-
-button{
-    border:0;
-    border-radius:8px;
-    padding:11px 18px;
-    color:#fff;
-    background:var(--accent);
-    cursor:pointer;
-    font-size:14px;
-    font-weight:600;
-    transition:.2s;
-}
-
-button:hover{
-    filter:brightness(.94);
-}
-
-button:active{
-    transform:scale(.98);
-}
-
-.logout-btn{
-    background:var(--danger);
-}
-
-.back-btn{
-    background:var(--gray);
-}
-
-.levels-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
-    margin-top:20px;
-}
-
-.level-card{
-    background:#fff;
-    border:2px solid var(--border);
-    border-radius:12px;
-    padding:25px 15px;
-    text-align:center;
-    cursor:pointer;
-    transition:.25s;
-    user-select:none;
-}
-
-.level-card:hover{
-    transform:translateY(-4px);
-    border-color:var(--primary-light);
-    box-shadow:0 10px 20px rgba(59,130,246,.12);
-}
-
-.level-card:active{
-    transform:scale(.98);
-}
-
-.level-card h3{
-    color:var(--primary);
-    margin:0 0 7px;
-    font-size:18px;
-}
-
-.level-card p{
-    color:var(--gray);
-    margin:0;
-    font-size:12px;
-}
-
-.fr-text{
-    display:block;
-    font-size:11px;
-    color:var(--gray);
-    font-weight:normal;
-}
-
-.level-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    padding-bottom:15px;
-    margin-bottom:20px;
-    border-bottom:2px solid #f1f5f9;
-}
-
-.level-header h2{
-    color:var(--primary);
-    margin:0;
-    font-size:20px;
-}
-
-.tabs{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-bottom:20px;
-}
-
-.tab-btn{
-    background:var(--gray);
-}
-
-.tab-btn.active{
-    background:var(--primary);
-}
-
-.form-section{
-    background:#f8fafc;
-    border:1px solid var(--border);
-    padding:20px;
-    border-radius:10px;
-    margin-bottom:20px;
-}
-
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-    gap:15px;
-}
-
-.form-group{
-    margin-bottom:10px;
-}
-
-label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:600;
-    color:#475569;
-    font-size:13px;
-}
-
-input,
-select{
-    width:100%;
-    padding:11px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    background:#fff;
-    font-size:14px;
-    color:var(--text);
-}
-
-input:focus,
-select:focus{
-    outline:none;
-    border-color:var(--primary-light);
-    box-shadow:0 0 0 3px rgba(59,130,246,.12);
-}
-
-.form-actions{
-    display:flex;
-    gap:10px;
-    margin-top:15px;
-}
-
-.form-actions button{
-    flex:1;
-}
-
-.cancel-btn{
-    background:var(--gray);
-}
-
-.excel-btn{
-    background:#0d9488;
-    margin-bottom:15px;
-}
-
-.search-box{
-    margin-bottom:15px;
-}
-
-.table-wrap{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:14px;
-}
-
-th,
-td{
-    padding:11px;
-    text-align:right;
-    border-bottom:1px solid var(--border);
-    white-space:nowrap;
-}
-
-th{
-    background:#f1f5f9;
-    color:var(--primary);
-}
-
-tr:hover{
-    background:#f8fafc;
-}
-
-.action-btns{
-    display:flex;
-    gap:5px;
-}
-
-.edit-btn{
-    background:var(--primary-light);
-    padding:6px 10px;
-    font-size:12px;
-}
-
-.delete-btn{
-    background:var(--danger);
-    padding:6px 10px;
-    font-size:12px;
-}
-
-.message{
-    text-align:center;
-    margin-top:10px;
-    min-height:20px;
-    font-size:13px;
-    font-weight:600;
-}
-
-.message.success{
-    color:#059669;
-}
-
-.message.error{
-    color:#dc2626;
-}
-
-.message.info{
-    color:var(--primary);
-}
-
-.attendance-tools{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-}
-
-.attendance-actions{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-top:18px;
-}
-
-.attendance-actions button{
-    flex:1;
-    min-width:130px;
-}
-
-.present-btn{
-    background:var(--accent);
-}
-
-.absent-btn{
-    background:var(--danger);
-}
-
-.late-btn{
-    background:var(--warning);
-}
-
-.excused-btn{
-    background:var(--purple);
-}
-
-.reset-btn{
-    background:var(--gray);
-}
-
-.attendance-table select{
-    min-width:135px;
-}
-
-.attendance-summary{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin:20px 0;
-}
-
-.summary-box{
-    min-width:110px;
-    flex:1;
-    text-align:center;
-    padding:12px;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:9px;
-}
-
-.summary-box span{
-    display:block;
-    color:var(--gray);
-    font-size:12px;
-}
-
-.summary-box strong{
-    display:block;
-    margin-top:5px;
-    font-size:20px;
-}
-
-.save-attendance{
-    width:100%;
-    margin-top:20px;
-    font-size:16px;
-}
-
-.placeholder{
-    text-align:center;
-    padding:40px 20px;
-    color:var(--gray);
-    background:#f8fafc;
-    border:1px dashed var(--border);
-    border-radius:10px;
-}
-
-.note{
-    color:var(--gray);
-    font-size:12px;
-    line-height:1.8;
-    margin-top:15px;
-}
-
-/* شاشة الخطأ */
-#js-error-box{
-    display:none;
-    position:fixed;
-    left:10px;
-    right:10px;
-    bottom:10px;
-    z-index:99999;
-    background:#fee2e2;
-    color:#991b1b;
-    border:2px solid #ef4444;
-    border-radius:10px;
-    padding:14px;
-    direction:ltr;
-    text-align:left;
-    font-family:monospace;
-    font-size:12px;
-    box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
-
-@media(max-width:600px){
-
-    .container{
-        margin:15px auto;
-    }
-
-    .card{
-        padding:17px;
-    }
-
-    .user-info{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    .level-header{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    .form-actions{
-        flex-direction:column;
-    }
-
-    .attendance-actions{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-    }
-
-    .attendance-actions button{
-        min-width:0;
-    }
-
-    th,
-    td{
-        padding:8px;
-    }
-}
-</style>
 </head>
 
 <body>
-
-<!-- صندوق كشف أخطاء JavaScript -->
-<div id="js-error-box"></div>
 
 <header class="header-banner">
     <h1>مؤسسة الرسالة للتعليم الخصوصي</h1>
@@ -493,28 +21,30 @@ tr:hover{
 
 <main class="container">
 
-    <!-- =========================
-         الصفحة الرئيسية
-    ========================== -->
+    <!-- الصفحة الرئيسية -->
 
     <section id="dashboard" class="card">
 
         <div class="user-info">
+
             <div>
                 فضاء التعليم - المستويات الدراسية
-                <span class="fr-text">Niveaux Scolaires</span>
+                <span class="fr-text">
+                    Niveaux Scolaires
+                </span>
             </div>
 
             <button id="resetBtn" class="logout-btn">
                 إعادة تعيين
             </button>
+
         </div>
 
-        <h2 style="color:var(--primary);margin-bottom:8px;">
+        <h2 class="main-title">
             المستويات الدراسية
         </h2>
 
-        <p style="color:var(--gray);">
+        <p class="description">
             اختر السلك التعليمي للدخول إلى فضاء التلاميذ:
         </p>
 
@@ -526,17 +56,17 @@ tr:hover{
             </div>
 
             <div class="level-card" data-level="التعليم الابتدائي">
-                <h3>الابتدائي</h3>
+                <h3>التعليم الابتدائي</h3>
                 <p>Primaire</p>
             </div>
 
             <div class="level-card" data-level="التعليم الإعدادي">
-                <h3>الإعدادي</h3>
+                <h3>التعليم الإعدادي</h3>
                 <p>Collège</p>
             </div>
 
             <div class="level-card" data-level="التعليم الثانوي">
-                <h3>الثانوي</h3>
+                <h3>التعليم الثانوي</h3>
                 <p>Lycée</p>
             </div>
 
@@ -545,9 +75,7 @@ tr:hover{
     </section>
 
 
-    <!-- =========================
-         صفحة المستوى
-    ========================== -->
+    <!-- صفحة المستوى -->
 
     <section id="levelPage" class="card hidden">
 
@@ -557,9 +85,6 @@ tr:hover{
 
             <button id="backBtn" class="back-btn">
                 الرجوع للقائمة
-                <span class="fr-text" style="color:#fff;">
-                    Retour
-                </span>
             </button>
 
         </div>
@@ -571,40 +96,36 @@ tr:hover{
 
             <button
                 class="tab-btn active"
-                data-tab="students"
                 id="studentsTabBtn">
                 لائحة التلاميذ
-                <span class="fr-text" style="color:#fff;">
+                <span class="fr-text">
                     Élèves
                 </span>
             </button>
 
             <button
                 class="tab-btn"
-                data-tab="attendance"
                 id="attendanceTabBtn">
                 الحضور والغياب
-                <span class="fr-text" style="color:#fff;">
+                <span class="fr-text">
                     Présence
                 </span>
             </button>
 
             <button
                 class="tab-btn"
-                data-tab="grades"
                 id="gradesTabBtn">
                 النقاط والنتائج
-                <span class="fr-text" style="color:#fff;">
+                <span class="fr-text">
                     Notes
                 </span>
             </button>
 
             <button
                 class="tab-btn"
-                data-tab="payments"
                 id="paymentsTabBtn">
                 الأداء والرسوم
-                <span class="fr-text" style="color:#fff;">
+                <span class="fr-text">
                     Paiements
                 </span>
             </button>
@@ -613,79 +134,97 @@ tr:hover{
 
 
         <!-- =========================
-             تبويب التلاميذ
+             التلاميذ
         ========================== -->
 
         <div id="studentsTab">
 
             <div class="form-section">
 
-                <h3 id="studentFormTitle" style="color:var(--primary);margin-top:0;">
+                <h3 id="studentFormTitle">
                     ➕ إضافة تلميذ جديد
                     <span class="fr-text">
                         Ajouter un nouvel élève
                     </span>
                 </h3>
 
-                <input type="hidden" id="editStudentId">
+                <input
+                    type="hidden"
+                    id="editStudentId">
+
 
                 <div class="form-grid">
 
                     <div class="form-group">
+
                         <label>
                             كود مسار
-                            <span class="fr-text">Code Massar</span>
                         </label>
+
                         <input
                             type="text"
                             id="newMassar"
                             placeholder="مثال: M12345">
+
                     </div>
 
+
                     <div class="form-group">
+
                         <label>
                             الاسم الشخصي
-                            <span class="fr-text">Prénom</span>
                         </label>
+
                         <input
                             type="text"
                             id="newFirstName"
                             placeholder="الاسم الشخصي">
+
                     </div>
 
+
                     <div class="form-group">
+
                         <label>
                             الاسم العائلي
-                            <span class="fr-text">Nom</span>
                         </label>
+
                         <input
                             type="text"
                             id="newLastName"
                             placeholder="الاسم العائلي">
+
                     </div>
 
+
                     <div class="form-group">
+
                         <label>
-                            القسم الدراسي
-                            <span class="fr-text">Classe</span>
+                            القسم
                         </label>
+
                         <input
                             type="text"
                             id="newClass"
-                            placeholder="مثال: القسم الأول أ">
+                            placeholder="مثال: القسم الأول">
+
                     </div>
 
+
                     <div class="form-group">
+
                         <label>
                             تاريخ التسجيل
-                            <span class="fr-text">
-                                Date d'inscription
-                            </span>
                         </label>
-                        <input type="date" id="newDate">
+
+                        <input
+                            type="date"
+                            id="newDate">
+
                     </div>
 
                 </div>
+
 
                 <div class="form-actions">
 
@@ -701,12 +240,18 @@ tr:hover{
 
                 </div>
 
-                <div id="formMsg" class="message"></div>
+
+                <div
+                    id="formMsg"
+                    class="message">
+                </div>
 
             </div>
 
 
-            <button id="excelBtn" class="excel-btn">
+            <button
+                id="excelBtn"
+                class="excel-btn">
                 📥 تنزيل لائحة التلاميذ Excel
             </button>
 
@@ -714,16 +259,13 @@ tr:hover{
             <div class="search-box">
 
                 <label>
-                    بحث سريع في التلاميذ
-                    <span class="fr-text">
-                        Recherche rapide
-                    </span>
+                    البحث في التلاميذ
                 </label>
 
                 <input
                     type="text"
                     id="searchInput"
-                    placeholder="ابحث بكود مسار، الاسم، العائلة، أو القسم...">
+                    placeholder="ابحث بكود مسار أو الاسم أو القسم...">
 
             </div>
 
@@ -735,6 +277,7 @@ tr:hover{
                     <thead>
 
                         <tr>
+
                             <th>كود مسار</th>
                             <th>الاسم</th>
                             <th>العائلة</th>
@@ -742,6 +285,7 @@ tr:hover{
                             <th>القسم</th>
                             <th>تاريخ التسجيل</th>
                             <th>الإجراءات</th>
+
                         </tr>
 
                     </thead>
@@ -749,9 +293,15 @@ tr:hover{
                     <tbody id="studentsTableBody">
 
                         <tr>
-                            <td colspan="7" style="text-align:center;">
+
+                            <td
+                                colspan="7"
+                                style="text-align:center">
+
                                 جار تحميل التلاميذ...
+
                             </td>
+
                         </tr>
 
                     </tbody>
@@ -764,50 +314,76 @@ tr:hover{
 
 
         <!-- =========================
-             تبويب الحضور
+             الحضور والغياب
         ========================== -->
 
-        <div id="attendanceTab" class="hidden">
+        <div
+            id="attendanceTab"
+            class="hidden">
 
             <div class="form-section">
 
-                <h3 style="color:var(--primary);margin-top:0;">
+                <h3>
                     📋 تسجيل الحضور والغياب
                 </h3>
+
 
                 <div class="attendance-tools">
 
                     <div>
-                        <label>التاريخ</label>
+
+                        <label>
+                            التاريخ
+                        </label>
+
                         <input
                             type="date"
                             id="attendanceDate">
+
                     </div>
 
+
                     <div>
-                        <label>المستوى</label>
+
+                        <label>
+                            المستوى
+                        </label>
+
                         <input
                             type="text"
                             id="attendanceLevel"
                             readonly>
+
                     </div>
 
+
                     <div>
-                        <label>القسم</label>
+
+                        <label>
+                            القسم
+                        </label>
 
                         <select id="attendanceClass">
-                            <option value="">كل الأقسام</option>
+
+                            <option value="">
+                                كل الأقسام
+                            </option>
+
                         </select>
 
                     </div>
 
+
                     <div>
-                        <label>بحث عن تلميذ</label>
+
+                        <label>
+                            البحث
+                        </label>
 
                         <input
                             type="text"
                             id="attendanceSearch"
-                            placeholder="الاسم أو مسار...">
+                            placeholder="ابحث عن تلميذ...">
 
                     </div>
 
@@ -817,32 +393,32 @@ tr:hover{
                 <div class="attendance-actions">
 
                     <button
-                        class="present-btn"
-                        id="markAllPresent">
+                        id="markAllPresent"
+                        class="present-btn">
                         ✓ الكل حاضر
                     </button>
 
                     <button
-                        class="absent-btn"
-                        id="markAllAbsent">
+                        id="markAllAbsent"
+                        class="absent-btn">
                         ✕ الكل غائب
                     </button>
 
                     <button
-                        class="late-btn"
-                        id="markAllLate">
+                        id="markAllLate"
+                        class="late-btn">
                         ⏱ الكل متأخر
                     </button>
 
                     <button
-                        class="excused-btn"
-                        id="markAllExcused">
+                        id="markAllExcused"
+                        class="excused-btn">
                         ✓ غياب مبرر
                     </button>
 
                     <button
-                        class="reset-btn"
-                        id="resetAttendance">
+                        id="resetAttendance"
+                        class="reset-btn">
                         إعادة ضبط
                     </button>
 
@@ -866,85 +442,4 @@ tr:hover{
                 <div class="summary-box">
                     <span>غائب</span>
                     <strong id="countAbsent">0</strong>
-                </div>
-
-                <div class="summary-box">
-                    <span>متأخر</span>
-                    <strong id="countLate">0</strong>
-                </div>
-
-                <div class="summary-box">
-                    <span>غياب مبرر</span>
-                    <strong id="countExcused">0</strong>
-                </div>
-
-            </div>
-
-
-            <div class="table-wrap">
-
-                <table class="attendance-table">
-
-                    <thead>
-
-                        <tr>
-                            <th>كود مسار</th>
-                            <th>الاسم الكامل</th>
-                            <th>القسم</th>
-                            <th>الحالة</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="attendanceTableBody"></tbody>
-
-                </table>
-
-            </div>
-
-
-            <button
-                id="saveAttendanceBtn"
-                class="save-attendance">
-                💾 حفظ الحضور والغياب
-            </button>
-
-            <div id="attendanceMsg" class="message"></div>
-
-            <div class="note">
-                ملاحظة: لا توجد مادة دراسية مضافة في هذه المرحلة.
-                سيتم إدراج المادة لاحقًا عند تحديد المواد المعتمدة.
-                ويمكن تسجيل أكثر من حضور للتلميذ في اليوم نفسه.
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             النقاط
-        ========================== -->
-
-        <div id="gradesTab" class="hidden">
-
-            <div class="placeholder">
-
-                <h3>📊 النقاط والنتائج</h3>
-
-                <p>
-                    هذا القسم جاهز للإضافة لاحقًا.
-                </p>
-
-                <span class="fr-text">
-                    Notes & Résultats
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <!-- =========================
-             الأداء
-        ========================== -->
-
-        <div id="
+                </
