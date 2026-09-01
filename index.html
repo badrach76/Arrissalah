@@ -197,24 +197,43 @@
         let currentActiveLevel = '';
 
         async function checkUser() {
-            const { data: { session } } = await _supabase.auth.getSession();
-            if (session) {
-                showDashboard(session.user.email);
+            try {
+                const { data: { session } } = await _supabase.auth.getSession();
+                if (session) {
+                    showDashboard(session.user.email);
+                }
+            } catch (err) {
+                console.error("Auth check error:", err);
             }
         }
 
         async function handleLogin() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
             const msg = document.getElementById('message');
 
-            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-            
-            if (error) {
-                msg.innerText = "خطأ في بيانات الدخول / Erreur de connexion: " + error.message;
-            } else {
-                msg.innerText = "";
-                showDashboard(data.user.email);
+            if (!email || !password) {
+                msg.style.color = '#ef4444';
+                msg.innerText = "المرجو إدخال البريد وكلمة المرور / Veuillez remplir tous les champs";
+                return;
+            }
+
+            msg.style.color = '#3b82f6';
+            msg.innerText = "جارٍ تسجيل الدخول... / Connexion en cours...";
+
+            try {
+                const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+                
+                if (error) {
+                    msg.style.color = '#ef4444';
+                    msg.innerText = "خطأ في الدخول: " + error.message;
+                } else {
+                    msg.innerText = "";
+                    showDashboard(data.user.email);
+                }
+            } catch (err) {
+                msg.style.color = '#ef4444';
+                msg.innerText = "حدث خطأ غير متوقع: " + err.message;
             }
         }
 
@@ -282,7 +301,6 @@
 
             let error;
             if (id) {
-                // تعديل تلميذ موجود
                 const res = await _supabase
                     .from('students')
                     .update({ 
@@ -295,7 +313,6 @@
                     .eq('id', id);
                 error = res.error;
             } else {
-                // إضافة تلميذ جديد
                 const res = await _supabase
                     .from('students')
                     .insert([
@@ -377,18 +394,4 @@
         }
 
         function renderTable(students) {
-            const tbody = document.getElementById('students-table-body');
-            tbody.innerHTML = '';
-            
-            if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات تلاميذ مسجلة لهذا المستوى حالياً / Aucun élève trouvé.</td></tr>`;
-                return;
-            }
-
-            students.forEach(st => {
-                const row = `<tr>
-                    <td><strong>${st.مسار || ''}</strong></td>
-                    <td>${st.الاسم || ''}</td>
-                    <td>${st.العائلة || ''}</td>
-                    <td>${st.المستوى || ''}</td>
-         
+            const tbody = document.getEl
