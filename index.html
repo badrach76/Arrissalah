@@ -239,8 +239,9 @@
                 document.getElementById('tab-content-students').style.display = 'block';
                 document.getElementById('btn-tab-students').style.backgroundColor = 'var(--primary)';
             } else if (tabName === 'attendance') {
-                document.getElementById('tab-content-attendance').style.display = 'block';
-                document.getElementById('btn-tab-attendance').style.backgroundColor = 'var(--primary)';
+    document.getElementById('tab-content-attendance').style.display = 'block';
+    document.getElementById('btn-tab-attendance').style.backgroundColor = 'var(--primary)';
+    initializeAttendance();
             } else if (tabName === 'grades') {
                 document.getElementById('tab-content-grades').style.display = 'block';
                 document.getElementById('btn-tab-grades').style.backgroundColor = 'var(--primary)';
@@ -465,6 +466,265 @@
         }
 
         resetForm();
+        // ===============================
+// واجهة تسجيل الحضور
+// ===============================
+
+let attendanceStudents = [];
+
+function initializeAttendance() {
+
+    const dateInput = document.getElementById('attendanceDate');
+    const levelDisplay = document.getElementById('attendanceLevel');
+
+    if (dateInput) {
+        dateInput.valueAsDate = new Date();
+    }
+
+    if (levelDisplay) {
+        levelDisplay.innerText = currentActiveLevel || '-';
+    }
+
+    loadAttendanceClasses();
+}
+
+
+// إنشاء قائمة الأقسام الموجودة في المستوى الحالي
+function loadAttendanceClasses() {
+
+    const classSelect = document.getElementById('attendanceClass');
+
+    if (!classSelect) return;
+
+    classSelect.innerHTML = `
+        <option value="">اختر القسم الدراسي</option>
+    `;
+
+    const classes = [...new Set(
+        allStudents
+            .filter(st => st.المستوى === currentActiveLevel)
+            .map(st => st.الصف)
+            .filter(Boolean)
+    )];
+
+    classes.sort();
+
+    classes.forEach(className => {
+
+        const option = document.createElement('option');
+
+        option.value = className;
+        option.textContent = className;
+
+        classSelect.appendChild(option);
+
+    });
+
+    classSelect.onchange = function () {
+
+        loadAttendanceStudents(this.value);
+
+    };
+}
+
+
+// تحميل تلاميذ القسم
+function loadAttendanceStudents(className) {
+
+    const tbody = document.getElementById('attendance-table-body');
+    const count = document.getElementById('attendanceStudentCount');
+
+    if (!className) {
+
+        attendanceStudents = [];
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5"
+                    style="text-align:center; color:#64748b; padding:25px;">
+                    اختر القسم لعرض التلاميذ
+                    <span class="fr-text">
+                        Sélectionnez une classe
+                    </span>
+                </td>
+            </tr>
+        `;
+
+        count.innerText = '0';
+
+        return;
+    }
+
+    attendanceStudents = allStudents.filter(st =>
+        st.المستوى === currentActiveLevel &&
+        st.الصف === className
+    );
+
+    renderAttendanceTable(attendanceStudents);
+}
+
+
+// عرض جدول التلاميذ
+function renderAttendanceTable(students) {
+
+    const tbody = document.getElementById('attendance-table-body');
+    const count = document.getElementById('attendanceStudentCount');
+
+    tbody.innerHTML = '';
+
+    count.innerText = students.length;
+
+    if (students.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5"
+                    style="text-align:center; color:#64748b; padding:25px;">
+                    لا يوجد تلاميذ في هذا القسم
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    students.forEach((student, index) => {
+
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+
+            <td>${index + 1}</td>
+
+            <td>
+                <strong>${student.مسار || ''}</strong>
+            </td>
+
+            <td>
+                ${student.الاسم || ''} ${student.العائلة || ''}
+            </td>
+
+            <td>
+                <span style="
+                    background:#e0f2fe;
+                    color:#0369a1;
+                    padding:4px 8px;
+                    border-radius:4px;
+                    font-size:12px;
+                    font-weight:600;
+                ">
+                    ${student.الصف || ''}
+                </span>
+            </td>
+
+            <td>
+
+                <select
+                    class="attendance-status"
+                    data-student-id="${student.id}"
+                    data-massar="${student.مسار || ''}"
+                    style="
+                        min-width:130px;
+                        padding:8px;
+                    "
+                >
+
+                    <option value="">اختر الحالة</option>
+                    <option value="حاضر">✓ حاضر</option>
+                    <option value="غائب">✕ غائب</option>
+                    <option value="متأخر">⏱ متأخر</option>
+                    <option value="غياب مبرر">⚠ غياب مبرر</option>
+
+                </select>
+
+            </td>
+        `;
+
+        tbody.appendChild(row);
+
+    });
+}
+
+
+// البحث داخل لائحة الحضور
+function filterAttendanceStudents() {
+
+    const query = document
+        .getElementById('attendanceSearch')
+        .value
+        .toLowerCase()
+        .trim();
+
+    const filtered = attendanceStudents.filter(st => {
+
+        const massar = (st.مسار || '').toLowerCase();
+        const firstName = (st.الاسم || '').toLowerCase();
+        const lastName = (st.العائلة || '').toLowerCase();
+
+        return (
+            massar.includes(query) ||
+            firstName.includes(query) ||
+            lastName.includes(query)
+        );
+
+    });
+
+    renderAttendanceTable(filtered);
+}
+
+
+// تحديد نفس الحالة لجميع التلاميذ
+function markAllAttendance(status) {
+
+    const selects = document.querySelectorAll(
+        '#attendance-table-body .attendance-status'
+    );
+
+    if (selects.length === 0) {
+
+        alert('المرجو اختيار القسم أولاً.');
+
+        return;
+    }
+
+    selects.forEach(select => {
+
+        select.value = status;
+
+    });
+
+}
+
+
+// إعادة واجهة الحضور إلى حالتها الأولية
+function resetAttendanceForm() {
+
+    document.getElementById('attendanceDate').valueAsDate =
+        new Date();
+
+    document.getElementById('attendanceClass').value = '';
+
+    document.getElementById('attendanceSearch').value = '';
+
+    attendanceStudents = [];
+
+    document.getElementById('attendanceStudentCount').innerText = '0';
+
+    document.getElementById('attendance-table-body').innerHTML = `
+        <tr>
+            <td colspan="5"
+                style="text-align:center; color:#64748b; padding:25px;">
+                اختر القسم لعرض التلاميذ
+                <span class="fr-text">
+                    Sélectionnez une classe
+                </span>
+            </td>
+        </tr>
+    `;
+
+    document.getElementById('attendance-msg').innerText = '';
+
+            }
     </script>
 </body>
 </html>
