@@ -857,3 +857,616 @@ function exportTableToExcel() {
         ".xlsx"
     );
             }
+function initializeAttendance() {
+
+    const classSelect =
+        document.getElementById("attendanceClass");
+
+    if (!classSelect) return;
+
+    const classes = [];
+
+    students.forEach(function(student) {
+
+        const className =
+            student["الصف"] || "";
+
+        if (
+            className &&
+            classes.indexOf(className) === -1
+        ) {
+            classes.push(className);
+        }
+    });
+
+    classes.sort(function(a, b) {
+        return a.localeCompare(b, "ar");
+    });
+
+    const currentValue =
+        classSelect.value;
+
+    classSelect.innerHTML =
+        '<option value="">جميع الأقسام</option>';
+
+    classes.forEach(function(className) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = className;
+        option.textContent = className;
+
+        classSelect.appendChild(option);
+    });
+
+    if (
+        classes.indexOf(currentValue) !== -1
+    ) {
+        classSelect.value = currentValue;
+    }
+
+    students.forEach(function(student) {
+        student.attendanceStatus = "حاضر";
+    });
+
+    renderAttendance();
+}
+
+
+function renderAttendance() {
+
+    const tbody =
+        document.getElementById(
+            "attendanceTableBody"
+        );
+
+    const classSelect =
+        document.getElementById(
+            "attendanceClass"
+        );
+
+    const searchInput =
+        document.getElementById(
+            "attendanceSearch"
+        );
+
+    if (!tbody) return;
+
+    const selectedClass =
+        classSelect
+            ? classSelect.value
+            : "";
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+    const filtered =
+        students.filter(function(student) {
+
+            const classMatch =
+                !selectedClass ||
+                student["الصف"] === selectedClass;
+
+            const text = [
+                student["مسار"],
+                student["الاسم"],
+                student["العائلة"],
+                student["الصف"]
+            ]
+                .join(" ")
+                .toLowerCase();
+
+            return (
+                classMatch &&
+                text.includes(search)
+            );
+        });
+
+    if (!filtered.length) {
+
+        tbody.innerHTML =
+            '<tr><td colspan="6" class="empty">' +
+            "لا توجد نتائج." +
+            "</td></tr>";
+
+        updateAttendanceCounters();
+
+        return;
+    }
+
+    tbody.innerHTML =
+        filtered.map(function(student, index) {
+
+            const status =
+                student.attendanceStatus ||
+                "حاضر";
+
+            return `
+                <tr>
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            student["مسار"] || ""
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            (student["الاسم"] || "") +
+                            " " +
+                            (student["العائلة"] || "")
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            student["الصف"] || ""
+                        )}
+                    </td>
+
+                    <td>
+                        <select
+                            class="attendance-status"
+                            data-id="${escapeHtml(
+                                String(student.id)
+                            )}"
+                        >
+
+                            <option
+                                value="حاضر"
+                                ${
+                                    status === "حاضر"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
+                                حاضر
+                            </option>
+
+                            <option
+                                value="غائب"
+                                ${
+                                    status === "غائب"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
+                                غائب
+                            </option>
+
+                            <option
+                                value="متأخر"
+                                ${
+                                    status === "متأخر"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
+                                متأخر
+                            </option>
+
+                            <option
+                                value="غياب مبرر"
+                                ${
+                                    status === "غياب مبرر"
+                                        ? "selected"
+                                        : ""
+                                }
+                            >
+                                غياب مبرر
+                            </option>
+
+                        </select>
+                    </td>
+                </tr>
+            `;
+
+        }).join("");
+
+    tbody
+        .querySelectorAll(
+            ".attendance-status"
+        )
+        .forEach(function(select) {
+
+            select.addEventListener(
+                "change",
+                function() {
+
+                    const student =
+                        students.find(
+                            function(item) {
+                                return (
+                                    String(item.id) ===
+                                    String(
+                                        select.dataset.id
+                                    )
+                                );
+                            }
+                        );
+
+                    if (student) {
+                        student.attendanceStatus =
+                            select.value;
+                    }
+
+                    updateAttendanceCounters();
+                }
+            );
+
+        });
+
+    updateAttendanceCounters();
+}
+
+
+function markAllAttendance(status) {
+
+    const classSelect =
+        document.getElementById(
+            "attendanceClass"
+        );
+
+    const searchInput =
+        document.getElementById(
+            "attendanceSearch"
+        );
+
+    const selectedClass =
+        classSelect
+            ? classSelect.value
+            : "";
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+    students.forEach(function(student) {
+
+        const classMatch =
+            !selectedClass ||
+            student["الصف"] === selectedClass;
+
+        const text = [
+            student["مسار"],
+            student["الاسم"],
+            student["العائلة"],
+            student["الصف"]
+        ]
+            .join(" ")
+            .toLowerCase();
+
+        if (
+            classMatch &&
+            text.includes(search)
+        ) {
+            student.attendanceStatus =
+                status;
+        }
+    });
+
+    renderAttendance();
+}
+
+
+function updateAttendanceCounters() {
+
+    const visibleStudents =
+        getVisibleAttendanceStudents();
+
+    let present = 0;
+    let absent = 0;
+    let late = 0;
+    let excused = 0;
+
+    visibleStudents.forEach(
+        function(student) {
+
+            const status =
+                student.attendanceStatus ||
+                "حاضر";
+
+            if (status === "حاضر") {
+                present++;
+            }
+            else if (status === "غائب") {
+                absent++;
+            }
+            else if (status === "متأخر") {
+                late++;
+            }
+            else if (
+                status === "غياب مبرر"
+            ) {
+                excused++;
+            }
+        }
+    );
+
+    setText(
+        "countTotal",
+        visibleStudents.length
+    );
+
+    setText(
+        "countPresent",
+        present
+    );
+
+    setText(
+        "countAbsent",
+        absent
+    );
+
+    setText(
+        "countLate",
+        late
+    );
+
+    setText(
+        "countExcused",
+        excused
+    );
+}
+
+
+function getVisibleAttendanceStudents() {
+
+    const classSelect =
+        document.getElementById(
+            "attendanceClass"
+        );
+
+    const searchInput =
+        document.getElementById(
+            "attendanceSearch"
+        );
+
+    const selectedClass =
+        classSelect
+            ? classSelect.value
+            : "";
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+    return students.filter(
+        function(student) {
+
+            const classMatch =
+                !selectedClass ||
+                student["الصف"] === selectedClass;
+
+            const text = [
+                student["مسار"],
+                student["الاسم"],
+                student["العائلة"],
+                student["الصف"]
+            ]
+                .join(" ")
+                .toLowerCase();
+
+            return (
+                classMatch &&
+                text.includes(search)
+            );
+        }
+    );
+}
+async function saveAttendance() {
+
+    const dateInput =
+        document.getElementById("attendanceDate");
+
+    const date =
+        dateInput ? dateInput.value : "";
+
+    if (!date) {
+
+        showMessage(
+            "attendanceMsg",
+            "المرجو تحديد تاريخ الحضور.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (!_supabase) {
+
+        showMessage(
+            "attendanceMsg",
+            "قاعدة البيانات غير متاحة.",
+            "error"
+        );
+
+        return;
+    }
+
+    const visibleStudents =
+        getVisibleAttendanceStudents();
+
+    if (!visibleStudents.length) {
+
+        showMessage(
+            "attendanceMsg",
+            "لا توجد لائحة لحفظ الحضور.",
+            "error"
+        );
+
+        return;
+    }
+
+    const records =
+        visibleStudents.map(function(student) {
+
+            return {
+
+                massar:
+                    student["مسار"] || "",
+
+                "الاسم_كامل":
+                    (student["الاسم"] || "") +
+                    " " +
+                    (student["العائلة"] || ""),
+
+                "المستوى":
+                    currentLevel,
+
+                "الصف":
+                    student["الصف"] || "",
+
+                "الحالة":
+                    student.attendanceStatus ||
+                    "حاضر",
+
+                "التاريخ":
+                    date
+            };
+        });
+
+    try {
+
+        const result =
+            await _supabase
+                .from("attendances")
+                .insert(records);
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        showMessage(
+            "attendanceMsg",
+            "تم حفظ الحضور والغياب بنجاح.",
+            "success"
+        );
+
+    } catch (error) {
+
+        showMessage(
+            "attendanceMsg",
+            error.message ||
+            "تعذر حفظ الحضور.",
+            "error"
+        );
+    }
+}
+
+
+function showMessage(
+    elementId,
+    message,
+    type
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+    if (!element) return;
+
+    element.textContent = message;
+
+    element.className =
+        "message " +
+        (type || "");
+
+    setTimeout(function() {
+
+        element.textContent = "";
+
+        element.className =
+            "message";
+
+    }, 5000);
+}
+
+
+function setText(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function showError(error) {
+
+    const box =
+        document.getElementById(
+            "js-error-box"
+        );
+
+    if (!box) return;
+
+    box.classList.remove("hidden");
+
+    box.textContent =
+        "خطأ: " +
+        (
+            error &&
+            error.message
+                ? error.message
+                : String(error)
+        );
+}
+
+
+window.onerror =
+    function(
+        message,
+        source,
+        lineno,
+        colno,
+        error
+    ) {
+
+        showError(
+            error || message
+        );
+
+        return false;
+    };
+
+
+window.addEventListener(
+    "unhandledrejection",
+    function(event) {
+
+        showError(
+            event.reason ||
+            "خطأ غير معروف"
+        );
+    }
+);
