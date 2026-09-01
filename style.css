@@ -1,1 +1,758 @@
+:root {
+    --primary: #1e3a8a;
+    --primary-light: #3b82f6;
+    --accent: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --purple: #6366f1;
+    --gray: #64748b;
+    --bg: #f8fafc;
+    --text: #1e293b;
+    --border: #e2e8f0;
+    --white: #ffffff;
+}
 
+* {
+    box-sizing: border-box;
+}
+
+html {
+    direction: rtl;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        "Segoe UI",
+        Tahoma,
+        Arial,
+        sans-serif;
+    direction: rtl;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header-banner {
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary-light)
+        );
+
+    color: #fff;
+
+    padding: 25px 15px;
+
+    text-align: center;
+
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.header-banner h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header-banner p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* =========================
+   GENERAL
+========================= */
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.card {
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.05);
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.main-title {
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.description {
+    color: var(--gray);
+}
+
+.fr-text {
+    display: block;
+
+    font-size: 11px;
+
+    color: var(--gray);
+
+    font-weight: normal;
+}
+
+/* =========================
+   USER INFO
+========================= */
+
+.user-info {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+
+    padding: 12px 16px;
+
+    border-radius: 9px;
+
+    margin-bottom: 25px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+    border: 0;
+
+    border-radius: 8px;
+
+    padding: 11px 18px;
+
+    color: #fff;
+
+    background: var(--accent);
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.2s,
+        filter 0.2s,
+        box-shadow 0.2s;
+}
+
+button:hover {
+    filter: brightness(0.94);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.logout-btn {
+    background: var(--danger);
+}
+
+.back-btn {
+    background: var(--gray);
+}
+
+.cancel-btn {
+    background: var(--gray);
+}
+
+.excel-btn {
+    background: #0d9488;
+    margin-bottom: 15px;
+}
+
+/* =========================
+   LEVELS
+========================= */
+
+.levels-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(200px, 1fr)
+        );
+
+    gap: 15px;
+
+    margin-top: 20px;
+}
+
+.level-card {
+    background: #fff;
+
+    border: 2px solid var(--border);
+
+    border-radius: 12px;
+
+    padding: 25px 15px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s,
+        border-color 0.25s,
+        box-shadow 0.25s;
+
+    user-select: none;
+}
+
+.level-card:hover {
+    transform: translateY(-4px);
+
+    border-color: var(--primary-light);
+
+    box-shadow:
+        0 10px 20px
+        rgba(59, 130, 246, 0.12);
+}
+
+.level-card:active {
+    transform: scale(0.98);
+}
+
+.level-card h3 {
+    color: var(--primary);
+
+    margin:
+        0 0 7px;
+
+    font-size: 18px;
+}
+
+.level-card p {
+    color: var(--gray);
+
+    margin: 0;
+
+    font-size: 12px;
+}
+
+/* =========================
+   LEVEL HEADER
+========================= */
+
+.level-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding-bottom: 15px;
+
+    margin-bottom: 20px;
+
+    border-bottom:
+        2px solid #f1f5f9;
+}
+
+.level-header h2 {
+    color: var(--primary);
+
+    margin: 0;
+
+    font-size: 20px;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.tabs {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background: var(--gray);
+}
+
+.tab-btn.active {
+    background: var(--primary);
+}
+
+/* =========================
+   FORMS
+========================= */
+
+.form-section {
+    background: #f8fafc;
+
+    border: 1px solid var(--border);
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+}
+
+.form-section h3 {
+    color: var(--primary);
+
+    margin-top: 0;
+}
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(190px, 1fr)
+        );
+
+    gap: 15px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-weight: 600;
+
+    color: #475569;
+
+    font-size: 13px;
+}
+
+input,
+select {
+    width: 100%;
+
+    padding: 11px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    font-size: 14px;
+
+    color: var(--text);
+}
+
+input:focus,
+select:focus {
+    outline: none;
+
+    border-color:
+        var(--primary-light);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(59, 130, 246, 0.12);
+}
+
+.form-actions {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.form-actions button {
+    flex: 1;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-box {
+    margin-bottom: 15px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap {
+    overflow-x: auto;
+
+    width: 100%;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 14px;
+}
+
+th,
+td {
+    padding: 11px;
+
+    text-align: right;
+
+    border-bottom:
+        1px solid var(--border);
+
+    white-space: nowrap;
+}
+
+th {
+    background: #f1f5f9;
+
+    color: var(--primary);
+}
+
+tr:hover {
+    background: #f8fafc;
+}
+
+/* =========================
+   STUDENT ACTIONS
+========================= */
+
+.action-btns {
+    display: flex;
+
+    gap: 5px;
+}
+
+.edit-btn {
+    background:
+        var(--primary-light);
+
+    padding: 6px 10px;
+
+    font-size: 12px;
+}
+
+.delete-btn {
+    background:
+        var(--danger);
+
+    padding: 6px 10px;
+
+    font-size: 12px;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.message {
+    text-align: center;
+
+    margin-top: 10px;
+
+    min-height: 20px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.message.success {
+    color: #059669;
+}
+
+.message.error {
+    color: #dc2626;
+}
+
+.message.info {
+    color: var(--primary);
+}
+
+/* =========================
+   ATTENDANCE
+========================= */
+
+.attendance-tools {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(180px, 1fr)
+        );
+
+    gap: 15px;
+}
+
+.attendance-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 18px;
+}
+
+.attendance-actions button {
+    flex: 1;
+
+    min-width: 130px;
+}
+
+.present-btn {
+    background: var(--accent);
+}
+
+.absent-btn {
+    background: var(--danger);
+}
+
+.late-btn {
+    background: var(--warning);
+}
+
+.excused-btn {
+    background: var(--purple);
+}
+
+.reset-btn {
+    background: var(--gray);
+}
+
+.attendance-table select {
+    min-width: 135px;
+}
+
+/* =========================
+   ATTENDANCE SUMMARY
+========================= */
+
+.attendance-summary {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin: 20px 0;
+}
+
+.summary-box {
+    min-width: 110px;
+
+    flex: 1;
+
+    text-align: center;
+
+    padding: 12px;
+
+    background: #fff;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 9px;
+}
+
+.summary-box span {
+    display: block;
+
+    color: var(--gray);
+
+    font-size: 12px;
+}
+
+.summary-box strong {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 20px;
+}
+
+.save-attendance {
+    width: 100%;
+
+    margin-top: 20px;
+
+    font-size: 16px;
+}
+
+/* =========================
+   PLACEHOLDER
+========================= */
+
+.placeholder {
+    text-align: center;
+
+    padding: 40px 20px;
+
+    color: var(--gray);
+
+    background: #f8fafc;
+
+    border:
+        1px dashed var(--border);
+
+    border-radius: 10px;
+}
+
+.note {
+    color: var(--gray);
+
+    font-size: 12px;
+
+    line-height: 1.8;
+
+    margin-top: 15px;
+}
+
+/* =========================
+   JAVASCRIPT ERROR BOX
+========================= */
+
+#js-error-box {
+    display: none;
+
+    position: fixed;
+
+    left: 10px;
+
+    right: 10px;
+
+    bottom: 10px;
+
+    z-index: 99999;
+
+    background: #fee2e2;
+
+    color: #991b1b;
+
+    border:
+        2px solid #ef4444;
+
+    border-radius: 10px;
+
+    padding: 14px;
+
+    direction: ltr;
+
+    text-align: left;
+
+    font-family: monospace;
+
+    font-size: 12px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.2);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .container {
+        margin: 15px auto;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+    .header-banner h1 {
+        font-size: 20px;
+    }
+
+    .user-info {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .level-header {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .attendance-actions {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .attendance-actions button {
+        min-width: 0;
+    }
+
+    th,
+    td {
+        padding: 8px;
+
+        font-size: 12px;
+    }
+
+    .tabs {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .tabs button {
+        width: 100%;
+    }
+}
