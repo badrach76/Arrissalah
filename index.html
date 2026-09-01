@@ -73,26 +73,11 @@
 
     <div class="container">
         
-        <!-- نموذج تسجيل الدخول -->
-        <div id="login-form" class="card" style="max-width: 420px; margin: 40px auto;">
-            <h2>تسجيل الدخول للإدارة <span class="fr-text">Connexion Administrative</span></h2>
-            <div class="form-group" style="margin-top: 20px;">
-                <label>البريد الإلكتروني <span class="fr-text">Email</span></label>
-                <input type="email" id="email" placeholder="name@school.com" />
-            </div>
-            <div class="form-group">
-                <label>كلمة المرور <span class="fr-text">Mot de passe</span></label>
-                <input type="password" id="password" placeholder="••••••••" />
-            </div>
-            <button onclick="handleLogin()" style="width: 100%;">دخول آمن / Connexion</button>
-            <div id="message"></div>
-        </div>
-
-        <!-- لوحة التحكم الرئيسية والمستويات -->
-        <div id="dashboard-main" class="card" style="display:none;">
+        <!-- لوحة التحكم الرئيسية والمستويات (تظهر مباشرة) -->
+        <div id="dashboard-main" class="card">
             <div class="user-info">
-                <div>المستخدم (Utilisateur): <span id="user-email-display"></span></div>
-                <button class="logout-btn" onclick="handleLogout()">تسجيل الخروج (Déconnexion)</button>
+                <div>مرحباً بك في لوحة الإدارة / Bienvenue</div>
+                <button class="logout-btn" onclick="handleLogout()">إعادة تعيين (Réinitialiser)</button>
             </div>
 
             <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 20px;">المستويات الدراسية <span class="fr-text">Niveaux Scolaires</span></h3>
@@ -196,59 +181,9 @@
         let allStudents = [];
         let currentActiveLevel = '';
 
-        async function checkUser() {
-            try {
-                const { data: { session } } = await _supabase.auth.getSession();
-                if (session) {
-                    showDashboard(session.user.email);
-                }
-            } catch (err) {
-                console.error("Auth check error:", err);
-            }
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const msg = document.getElementById('message');
-
-            if (!email || !password) {
-                msg.style.color = '#ef4444';
-                msg.innerText = "المرجو إدخال البريد وكلمة المرور / Veuillez remplir tous les champs";
-                return;
-            }
-
-            msg.style.color = '#3b82f6';
-            msg.innerText = "جارٍ تسجيل الدخول... / Connexion en cours...";
-
-            try {
-                const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-                
-                if (error) {
-                    msg.style.color = '#ef4444';
-                    msg.innerText = "خطأ في الدخول: " + error.message;
-                } else {
-                    msg.innerText = "";
-                    showDashboard(data.user.email);
-                }
-            } catch (err) {
-                msg.style.color = '#ef4444';
-                msg.innerText = "حدث خطأ غير متوقع: " + err.message;
-            }
-        }
-
-        async function handleLogout() {
-            await _supabase.auth.signOut();
-            document.getElementById('dashboard-main').style.display = 'none';
-            document.getElementById('level-page').style.display = 'none';
-            document.getElementById('login-form').style.display = 'block';
-        }
-
-        function showDashboard(email) {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('level-page').style.display = 'none';
-            document.getElementById('dashboard-main').style.display = 'block';
-            document.getElementById('user-email-display').innerText = email;
+        function handleLogout() {
+            localStorage.clear();
+            location.reload();
         }
 
         async function openLevel(levelName) {
@@ -358,7 +293,8 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function deleteStudent(id) {
+        async function deleteStudent(id, event) {
+            if (event) event.stopPropagation();
             if (!confirm("هل أنت متأكد من حذف هذا التلميذ؟ / Êtes-vous sûr de vouloir supprimer cet élève ?")) return;
 
             const { error } = await _supabase
@@ -394,4 +330,51 @@
         }
 
         function renderTable(students) {
-            const tbody = document.getEl
+            const tbody = document.getElementById('students-table-body');
+            tbody.innerHTML = '';
+            
+            if (students.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات تلاميذ مسجلة لهذا المستوى حالياً / Aucun élève trouvé.</td></tr>`;
+                return;
+            }
+
+            students.forEach(st => {
+                const row = `<tr>
+                    <td><strong>${st.مسار || ''}</strong></td>
+                    <td>${st.الاسم || ''}</td>
+                    <td>${st.العائلة || ''}</td>
+                    <td>${st.المستوى || ''}</td>
+                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">${st.الصف || ''}</span></td>
+                    <td>${st.تاريخ_التسجيل || ''}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="edit-btn" onclick="editStudent('${st.id}')">تعديل</button>
+                            <button class="delete-btn" onclick="deleteStudent('${st.id}', event)">حذف</button>
+                        </div>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function filterStudents() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            const filtered = allStudents.filter(st => {
+                const m = (st.مسار || '').toLowerCase();
+                const f = (st.الاسم || '').toLowerCase();
+                const l = (st.العائلة || '').toLowerCase();
+                const lvl = (st.المستوى || '').toLowerCase();
+                const cls = (st.الصف || '').toLowerCase();
+                const date = (st.تاريخ_التسجيل || '').toLowerCase();
+
+                return m.includes(query) || f.includes(query) || l.includes(query) || lvl.includes(query) || cls.includes(query) || date.includes(query);
+            });
+
+            renderTable(filtered);
+        }
+
+        resetForm();
+    </script>
+</body>
+</html>
