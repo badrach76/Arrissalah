@@ -442,4 +442,116 @@
                 <div class="summary-box">
                     <span>غائب</span>
                     <strong id="countAbsent">0</strong>
-                </
+                </div>
+
+                <div class="summary-box">
+                    <span>متأخر</span>
+                    <strong id="countLate">0</strong>
+                </div>
+
+                <div class="summary-box">
+                    <span>غياب مبرر</span>
+                    <strong id="countExcused">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>كود مسار</th>
+                            <th>الاسم الكامل</th>
+                            <th>القسم</th>
+                            <th>الحالة</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="attendanceTableBody"></tbody>
+
+                </table>
+
+            </div>
+
+
+            <button
+                id="saveAttendanceBtn"
+                class="save-attendance">
+
+                💾 حفظ الحضور والغياب
+
+            </button>
+
+
+            <div
+                id="attendanceMsg"
+                class="message">
+            </div>
+
+
+            <p class="note">
+                ملاحظة: المواد الدراسية لم يتم تحديدها بعد،
+                لذلك لا يتم ربط الحضور بالمادة في هذه المرحلة.
+                ويمكن تسجيل أكثر من حضور للتلميذ في اليوم نفسه.
+            </p>
+
+        </div>
+
+
+        <!-- النقاط -->
+
+        <div
+            id="gradesTab"
+            class="hidden">
+
+            <div class="placeholder">
+
+                <h3>
+                    📊 النقاط والنتائج
+                </h3>
+
+                <p>
+                    هذا القسم جاهز للإضافة لاحقًا.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- الأداء -->
+
+        <div
+            id="paymentsTab"
+            class="hidden">
+
+            <div class="placeholder">
+
+                <h3>
+                    💳 الأداء والرسوم
+                </h3>
+
+                <p>
+                    هذا القسم جاهز للإضافة لاحقًا.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
